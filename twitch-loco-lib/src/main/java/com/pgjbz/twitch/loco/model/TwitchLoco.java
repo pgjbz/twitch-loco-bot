@@ -2,7 +2,8 @@ package com.pgjbz.twitch.loco.model;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Getter
 @Builder
@@ -10,11 +11,13 @@ public class TwitchLoco {
 
     private final String username;
     private final String oauth;
+    private final String channel;
 
-    public TwitchLoco(String username, String oauth) {
-        if(StringUtils.isBlank(username) || StringUtils.isBlank(oauth))
-            throw new IllegalArgumentException("Username and oauth are mandatory");
+    public TwitchLoco(String username, String oauth, String channel) {
+        if(isBlank(username) || isBlank(oauth) || isBlank(channel))
+            throw new IllegalArgumentException("Username, oauth and channel are mandatory");
         this.username = username;
         this.oauth = oauth;
+        this.channel = channel;
     }
 }
