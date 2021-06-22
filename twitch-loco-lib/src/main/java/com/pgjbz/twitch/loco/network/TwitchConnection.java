@@ -2,10 +2,15 @@ package com.pgjbz.twitch.loco.network;
 
 import com.pgjbz.twitch.loco.enums.Command;
 import com.pgjbz.twitch.loco.exceptions.TwitchLocoConnectionException;
+import com.pgjbz.twitch.loco.listeners.LocoChatListener;
+import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.impl.TwitchLocoConnection;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -17,6 +22,8 @@ public abstract class TwitchConnection {
 
     public abstract void sendMessage(String message);
     public abstract void sendCommand(Command command, String ...targets);
+    public abstract void addChatListener(LocoChatListener chatListener);
+    public abstract void addIrcEventListener(LocoIrcEventsListener ircEventsListener);
 
     public static TwitchLocoConnection getConnection(TwitchLoco twitchLoco){
         var socket = createSocket();
