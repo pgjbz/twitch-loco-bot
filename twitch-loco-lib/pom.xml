@@ -14,18 +14,6 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <maven.assembly.plugin>3.3.0</maven.assembly.plugin>
     </properties>
-
-    <build>
-        <finalName>${project.name}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.plugin}</version>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
