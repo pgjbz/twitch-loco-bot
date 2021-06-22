@@ -14,8 +14,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,10 +27,10 @@ public class TwitchLocoConnection extends TwitchConnection {
     private final InputStreamReader inputStreamReader;
     private final BufferedWriter bufferedWriter;
     private final TwitchLoco twitchLoco;
-    private final Set<LocoChatListener> chatListeners = new CopyOnWriteArraySet<>();
-    private final Set<LocoIrcEventsListener> eventIrcListeners = new CopyOnWriteArraySet<>();
+    private final List<LocoChatListener> chatListeners = new Vector<>();
+    private final List<LocoIrcEventsListener> eventIrcListeners = new Vector<>();
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public TwitchLocoConnection(
             @NonNull Socket socket,
@@ -41,14 +41,11 @@ public class TwitchLocoConnection extends TwitchConnection {
         this.inputStreamReader = inputStreamReader;
         this.bufferedWriter = bufferedWriter;
         this.twitchLoco = twitchLoco;
-        startChatListenersThread();
-        startIrcEventsThread();
+        startThreads();
         executorService.shutdown();
     }
 
-    private void startChatListenersThread() {
-
-
+    private void startThreads() {
         executorService.submit(() -> {
             try {
                 String line;
@@ -59,24 +56,7 @@ public class TwitchLocoConnection extends TwitchConnection {
                     if(line.contains("PRIVMSG"))
                         for(LocoChatListener locoChatListener: chatListeners)
                             locoChatListener.listenChat(line);
-                }
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        });
-
-    }
-
-    private void startIrcEventsThread() {
-
-        executorService.submit(() -> {
-            try {
-                String line;
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                while(socket.isConnected()) {
-                    line = bufferedReader.readLine();
-                    if(isBlank(line)) continue;
-                    if(!line.contains("PRIVMSG"))
+                    else
                         for(LocoIrcEventsListener eventsListener: eventIrcListeners)
                             eventsListener.listenEvent(line);
                 }
@@ -84,6 +64,7 @@ public class TwitchLocoConnection extends TwitchConnection {
                 e.printStackTrace();
             }
         });
+
     }
 
     @Override
