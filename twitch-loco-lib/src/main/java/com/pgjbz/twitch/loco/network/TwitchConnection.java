@@ -17,6 +17,8 @@ import java.net.SocketAddress;
 
 import static com.pgjbz.twitch.loco.constants.TwitchConstants.TWITCH_IRC_PORT;
 import static com.pgjbz.twitch.loco.constants.TwitchConstants.TWITCH_IRC_URL;
+import static com.pgjbz.twitch.loco.enums.Command.NICK;
+import static com.pgjbz.twitch.loco.enums.Command.PASS;
 
 public abstract class TwitchConnection {
 
@@ -24,15 +26,18 @@ public abstract class TwitchConnection {
     public abstract void sendCommand(Command command, String ...targets);
     public abstract void addChatListener(LocoChatListener chatListener);
     public abstract void addIrcEventListener(LocoIrcEventsListener ircEventsListener);
+    public abstract void leaveChannel(String channel);
+    public abstract void joinChannel(String channel);
+    public abstract void close();
 
     public static TwitchLocoConnection getConnection(TwitchLoco twitchLoco){
         var socket = createSocket();
         var bufferedWriter = createBufferedWriter(socket);
         var inputStream = createInputStreamReader(socket);
         var twitchLocoConnection = new TwitchLocoConnection(socket, inputStream, bufferedWriter, twitchLoco);
-        twitchLocoConnection.sendCommand(Command.PASS, twitchLoco.getOauth());
-        twitchLocoConnection.sendCommand(Command.NICK, twitchLoco.getUsername());
-        twitchLocoConnection.sendCommand(Command.JOIN, twitchLoco.getChannel());
+        twitchLocoConnection.sendCommand(PASS, twitchLoco.getOauth());
+        twitchLocoConnection.sendCommand(NICK, twitchLoco.getUsername());
+        twitchLocoConnection.joinChannel(twitchLoco.getChannel());
         return twitchLocoConnection;
     }
 
