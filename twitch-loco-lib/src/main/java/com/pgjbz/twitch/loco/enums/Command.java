@@ -7,7 +7,8 @@ public enum Command {
     MESSAGE("PRIVMSG #$1 : $2"),
     PART("PART #$1"),
     @Deprecated
-    RECONNECT("RECONNECT");
+    RECONNECT("RECONNECT"),
+    PING("PING");
 
     private final String pattern;
 

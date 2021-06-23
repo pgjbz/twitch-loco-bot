@@ -1,15 +1,14 @@
 package com.pgjbz.twitch.loco.listeners.standards;
 
 import com.pgjbz.twitch.loco.listeners.LocoChatListener;
+import com.pgjbz.twitch.loco.model.ChatMessage;
+import com.pgjbz.twitch.loco.util.ChatUtil;
 
 public class StandardLocoChatListener implements LocoChatListener {
 
     @Override
     public void listenChat(String message) {
-        String[] fields = message.split(":");
-        String msg = fields[2];
-        String channel = fields[1].substring(message.indexOf("#"));
-        String user = message.split("!")[0].replace(":", "");
-        System.out.println(user + " on " + channel + "-> " + msg);
+        ChatMessage chatMessage = ChatUtil.extractFields(message);
+        System.out.println(chatMessage.getUser() + " on " + chatMessage.getChannel() + "-> " + chatMessage.getMessage());
     }
 }
