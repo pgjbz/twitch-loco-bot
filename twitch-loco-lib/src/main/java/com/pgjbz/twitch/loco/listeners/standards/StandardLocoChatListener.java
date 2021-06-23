@@ -6,6 +6,10 @@ public class StandardLocoChatListener implements LocoChatListener {
 
     @Override
     public void listenChat(String message) {
-        System.out.println(message);
+        String[] fields = message.split(":");
+        String msg = fields[2];
+        String channel = fields[1].substring(message.indexOf("#"));
+        String user = message.split("!")[0].replace(":", "");
+        System.out.println(user + " on " + channel + "-> " + msg);
     }
 }

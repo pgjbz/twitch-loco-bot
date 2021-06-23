@@ -113,7 +113,6 @@ public class TwitchLocoConnection extends TwitchConnection {
         for(int i = 1; i <= paramsLength; i++)
             commandPattern = commandPattern.replace("$"+i, targets[i-1]);
         try {
-            System.out.println(commandPattern);
             bufferedWriter.write(commandPattern + "\r\n");
             bufferedWriter.flush();
         } catch (IOException e) {
@@ -137,7 +136,10 @@ public class TwitchLocoConnection extends TwitchConnection {
     }
 
     @Override
+    @SneakyThrows
     public void joinChannel(String channel) {
+        leaveChannel(twitchLoco.getChannel());
+        Thread.sleep(4000);
         twitchLoco.setChannel(channel);
         sendCommand(JOIN, channel);
     }
@@ -146,6 +148,7 @@ public class TwitchLocoConnection extends TwitchConnection {
     @SneakyThrows
     public void close() {
         keepConnected = false;
+        leaveChannel(twitchLoco.getChannel());
         close(bufferedReader, bufferedWriter, inputStreamReader, socket);
     }
 
