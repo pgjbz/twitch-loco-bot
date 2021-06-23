@@ -110,8 +110,9 @@ public class TwitchLocoConnection extends TwitchConnection {
         int paramsLength = commandPattern.replaceAll("[^$]", "").length();
         if(paramsLength != targets.length)
             throw new TwitchLocoCommandParamException(String.format("Invalid arguments length, command required exact %s arguments", paramsLength));
-        for(int i = 1; i <= paramsLength; i++)
-            commandPattern = commandPattern.replace("$"+i, targets[i-1]);
+        if(targets.length > 0)
+            for(int i = 1; i <= paramsLength; i++)
+                commandPattern = commandPattern.replace("$"+i, targets[i-1]);
         try {
             bufferedWriter.write(commandPattern + "\r\n");
             bufferedWriter.flush();

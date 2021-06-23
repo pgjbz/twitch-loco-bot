@@ -56,7 +56,7 @@ public class TwitchLocoConnectionTests {
     @EnumSource(Command.class)
     void testSendCommandExpectedTwitchLocoCommandParamException(Command command) {
         int paramsLength = getCommandArgumentsLength(command, true);
-        String[] stringArr = new String[paramsLength];
+        String[] stringArr = new String[paramsLength > 0 ? paramsLength : 2];
 
         for(int i = 0; i < paramsLength; i++)
             stringArr[i] = ""+i;

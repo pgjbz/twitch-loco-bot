@@ -5,7 +5,6 @@ import com.pgjbz.twitch.loco.model.TwitchLoco;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,14 +22,14 @@ public class TwitchConnectionTests {
     private TwitchLoco twitchLoco;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         twitchLoco = new TwitchLoco("username", "oauth", "channel");
     }
 
     @Test
     void testGetConnectionExpectedTwitchLocoConnectionExceptionWhenCreateSocketConnection() throws Exception {
-        try(MockedConstruction<Socket> mockedSocket = Mockito.mockConstruction( Socket.class, (mocked, ctx) ->
-            doThrow(IOException.class).when(mocked).connect(any(SocketAddress.class)))) {
+        try (MockedConstruction<Socket> mockedSocket = mockConstruction(Socket.class, (mocked, ctx) ->
+                doThrow(IOException.class).when(mocked).connect(any(SocketAddress.class)))) {
             assertThrows(TwitchLocoConnectionException.class, () -> TwitchConnection.getConnection(twitchLoco));
             Socket socket = mockedSocket.constructed().get(0);
             verify(socket).connect(any(SocketAddress.class));
@@ -39,7 +38,7 @@ public class TwitchConnectionTests {
 
     @Test
     void testGetConnectionExpectedTwitchLocoConnectionExceptionWhenCreateBufferedWriter() throws Exception {
-        try(MockedConstruction<Socket> mockedSocket = Mockito.mockConstruction( Socket.class, (mocked, ctx) ->
+        try (MockedConstruction<Socket> mockedSocket = mockConstruction(Socket.class, (mocked, ctx) ->
                 doThrow(IOException.class).when(mocked).getOutputStream())) {
             assertThrows(TwitchLocoConnectionException.class, () -> TwitchConnection.getConnection(twitchLoco));
             Socket socket = mockedSocket.constructed().get(0);
@@ -50,7 +49,7 @@ public class TwitchConnectionTests {
 
     @Test
     void testGetConnectionExpectedTwitchLocoConnectionExceptionWhenCreateInputStreamReader() throws Exception {
-        try(MockedConstruction<Socket> mockedSocket = Mockito.mockConstruction( Socket.class, (mocked, ctx) -> {
+        try (MockedConstruction<Socket> mockedSocket = mockConstruction(Socket.class, (mocked, ctx) -> {
             doReturn(mock(OutputStream.class)).when(mocked).getOutputStream();
             doThrow(IOException.class).when(mocked).getInputStream();
         })) {
@@ -64,11 +63,15 @@ public class TwitchConnectionTests {
 
     @Test
     void testGetConnectionExpectedSuccess() throws Exception {
-        try(MockedConstruction<Socket> mockedSocket = Mockito.mockConstruction( Socket.class, (mocked, ctx) -> {
-            doReturn(mock(OutputStream.class)).when(mocked).getOutputStream();
-            doReturn(mock(InputStream.class)).when(mocked).getInputStream();
-        })) {
+        try (
+                MockedConstruction<Socket> mockedSocket = mockConstruction(Socket.class, (mocked, ctx) -> {
+                    doReturn(mock(OutputStream.class)).when(mocked).getOutputStream();
+                    doReturn(mock(InputStream.class)).when(mocked).getInputStream();
+                    doReturn(3).when(mocked).getReceiveBufferSize();
+                    doReturn(true).when(mocked).isConnected();
+                })) {
             var botConnection = TwitchConnection.getConnection(twitchLoco);
+            botConnection.close();
             Socket socket = mockedSocket.constructed().get(0);
             assertNotNull(botConnection, "Bot connection cannot be null");
             verify(socket).connect(any(SocketAddress.class));
