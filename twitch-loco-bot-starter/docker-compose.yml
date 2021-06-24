@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+
+  database:
+    container_name: loco-database
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_PASSWORD: locobot123
+      POSTGRES_USER: locobot
+      POSTGRES_DB: loco_database
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080

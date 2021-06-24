@@ -12,6 +12,7 @@
    
     <modules>
         <module>twitch-loco-lib</module>
+        <module>twitch-loco-bot-starter</module>
     </modules>
 
     <properties>
