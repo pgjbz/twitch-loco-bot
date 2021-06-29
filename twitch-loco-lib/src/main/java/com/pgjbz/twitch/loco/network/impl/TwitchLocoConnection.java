@@ -10,6 +10,7 @@ import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.util.ChatUtil;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,18 +19,17 @@ import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.List;
-import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.pgjbz.twitch.loco.constants.TwitchConstants.TWITCH_IRC_PORT;
 import static com.pgjbz.twitch.loco.constants.TwitchConstants.TWITCH_IRC_URL;
 import static com.pgjbz.twitch.loco.enums.Command.*;
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+@Log4j2
 public class TwitchLocoConnection extends TwitchConnection {
 
     private static final int RECONNECTION_ATTEMPTS = 3;
@@ -38,8 +38,8 @@ public class TwitchLocoConnection extends TwitchConnection {
     private final InputStreamReader inputStreamReader;
     private final BufferedWriter bufferedWriter;
     private final TwitchLoco twitchLoco;
-    private final List<LocoChatListener> chatListeners = new Vector<>();
-    private final List<LocoIrcEventsListener> eventIrcListeners = new Vector<>();
+    private final List<LocoChatListener> chatListeners = new CopyOnWriteArrayList<>();
+    private final List<LocoIrcEventsListener> eventIrcListeners = new CopyOnWriteArrayList<>();
     /*
         reconnect is in test
      */
@@ -57,11 +57,9 @@ public class TwitchLocoConnection extends TwitchConnection {
         this.inputStreamReader = inputStreamReader;
         this.bufferedWriter = bufferedWriter;
         this.twitchLoco = twitchLoco;
-        startThreads();
-        executorService.shutdown();
     }
 
-    private void startThreads() {
+    public void startThreads() {
         executorService.submit(() -> {
             try {
                 String line;
@@ -79,22 +77,27 @@ public class TwitchLocoConnection extends TwitchConnection {
                     }
                     if(keepConnected)
                         tryReconnect(RECONNECTION_ATTEMPTS);
+
                 }
             } catch (Exception e){
                 e.printStackTrace();
             }
         });
+        executorService.shutdown();
     }
 
     @SneakyThrows
     private void tryReconnect(int reconnectionAttempts) {
-        if(reconnectionAttempts == 0 || socket.isConnected()) return;
-        System.out.println("Try to reconnect...");
-        Thread.sleep((long)(pow(2.0, abs(reconnectionAttempts - RECONNECTION_ATTEMPTS))*1000));
+        if(reconnectionAttempts == 0) {
+            keepConnected = false;
+            return;
+        }
+        log.info("Try to reconnect... remaining attempts {}", reconnectionAttempts);
         if(!socket.isConnected())
             socket.connect(new InetSocketAddress(TWITCH_IRC_URL, TWITCH_IRC_PORT));
         else
             sendCommand(RECONNECT);
+        Thread.sleep(5000L);
         tryReconnect(--reconnectionAttempts);
     }
 

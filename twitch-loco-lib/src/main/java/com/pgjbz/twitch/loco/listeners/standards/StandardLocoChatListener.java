@@ -7,6 +7,6 @@ public class StandardLocoChatListener implements LocoChatListener {
 
     @Override
     public void listenChat(ChatMessage message) {
-        System.out.println(message.getUser() + " on " + message.getChannel() + "-> " + message.getMessage());
+        System.out.println(message.getUser() + " on " + message.getChannel() + " -> " + message.getMessage());
     }
 }

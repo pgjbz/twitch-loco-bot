@@ -1,29 +1,25 @@
 package com.pgjbz.bot.starter.model;
 
+import com.pgjbz.twitch.loco.model.ChatMessage;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 
 import java.util.Date;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 @Getter
-public class Message {
+@ToString
+public class Message extends ChatMessage {
 
     private Long id;
-    private final String username;
-    private final String message;
     private Date messageDate;
 
-    public Message(String username, String message) {
-        if(isBlank(username) || isBlank(message))
-            throw new IllegalArgumentException("Username and message are mandatory");
-        this.username = username;
-        this.message = message;
+    public Message(@NonNull ChatMessage chatMessage) {
+        super(chatMessage.getMessage(), chatMessage.getUser(), chatMessage.getChannel());
     }
 
-    public Message(@NonNull Long id, String username, String message, @NonNull Date messageDate) {
-        this(username, message);
+    public Message(@NonNull Long id, String message, String user, String channel, @NonNull Date messageDate) {
+        super(message, user, channel);
         this.id = id;
         this.messageDate = messageDate;
     }

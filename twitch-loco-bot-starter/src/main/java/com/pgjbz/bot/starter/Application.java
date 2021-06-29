@@ -17,7 +17,7 @@ import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.network.impl.TwitchLocoConnection;
 import lombok.SneakyThrows;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import static com.pgjbz.bot.starter.configs.BotConstants.CONFIG_FILE_SYSTEM_PROPERTY;
 import static com.pgjbz.bot.starter.configs.Configuration.getConfigs;
 
-@Log
+@Log4j2
 public class Application {
 
     @SneakyThrows
@@ -51,6 +51,7 @@ public class Application {
         TwitchLocoConnection connection = TwitchConnection.getConnection(
                 twitchLoco
         );
+        connection.startThreads();
         LocoChatListener chatListener = new StandardLocoChatListener();
         LocoIrcEventsListener ircEventsListener = new StandardLocoIrcEventsListener();
         connection.addChatListener(chatListener);
@@ -59,11 +60,12 @@ public class Application {
             //TODO decidir o pattern para este ponto, mais provavel que seja o Chain of Responsability
             Optional<TwitchUser> optionalTwitchUser = twitchUserRepository.findByUsername(message.getUser());
             if(optionalTwitchUser.isEmpty()) {
-                log.info(String.format("Inserting new user %s", message.getUser()));
+                log.info("Inserting new user {}", message.getUser());
                 twitchUserRepository.insert(new TwitchUser(message.getUser()));
             }
-            log.info("Saving message...");
-            messageRepository.insert(new Message(message.getUser(), message.getMessage()));
+            Message chatMessage = new Message(message);
+            log.info("Saving message '{}' on database", message.toString());
+            messageRepository.insert(chatMessage);
         });
         connection.addIrcEventListener(ircEventsListener);
         connection.addIrcEventListener(event -> {

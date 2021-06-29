@@ -6,14 +6,13 @@ import com.pgjbz.bot.starter.database.jdbc.RowMapper;
 import com.pgjbz.bot.starter.model.Message;
 import com.pgjbz.bot.starter.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 
-@Log
+@Log4j2
 @RequiredArgsConstructor
 public class MessageRepositoryImpl implements MessageRepository {
 
@@ -25,9 +24,10 @@ public class MessageRepositoryImpl implements MessageRepository {
         sql.append(" INSERT INTO MESSAGES( ");
         sql.append("   USERNAME, ");
         sql.append("   MESSAGE, ");
+        sql.append("   CHANNEL, ");
         sql.append("   MESSAGE_DATE) ");
-        sql.append(" VALUES(?,?, CURRENT_TIMESTAMP) ");
-        return jdbcTemplate.update(sql.toString(), new Object[]{message.getUsername(), message.getMessage()}) > 0;
+        sql.append(" VALUES(?,?, ?, CURRENT_TIMESTAMP) ");
+        return jdbcTemplate.update(sql.toString(), new Object[]{message.getUser(), message.getMessage(), message.getChannel()}) > 0;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         try {
             messages = jdbcTemplate.findAll(sql.toString(), rowMapper);
         } catch (EmptyResultException e) {
-            log.log(Level.WARNING, "No registers founded");
+            log.info("No results founded for messages");
         }
         return messages;
     }
@@ -53,7 +53,8 @@ public class MessageRepositoryImpl implements MessageRepository {
         Long id = rs.getLong("ID");
         String username =rs.getString("USERNAME");
         String message = rs.getString("MESSAGE");
+        String channel = rs.getString("CHANNEL");
         Date messageDate = new Date(rs.getDate("MESSAGE_DATE").getTime());
-        return new Message(id, username, message, messageDate);
+        return new Message(id, message, username, channel, messageDate);
     };
 }

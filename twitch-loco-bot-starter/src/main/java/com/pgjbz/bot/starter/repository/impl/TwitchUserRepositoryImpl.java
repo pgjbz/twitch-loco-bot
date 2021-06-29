@@ -6,15 +6,14 @@ import com.pgjbz.bot.starter.database.jdbc.RowMapper;
 import com.pgjbz.bot.starter.model.TwitchUser;
 import com.pgjbz.bot.starter.repository.TwitchUserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 
 import static java.util.Optional.ofNullable;
 
-@Log
+@Log4j2
 @RequiredArgsConstructor
 public class TwitchUserRepositoryImpl implements TwitchUserRepository {
 
@@ -39,7 +38,7 @@ public class TwitchUserRepositoryImpl implements TwitchUserRepository {
         try {
             twitchUser = jdbcTemplate.findObject(sql, new Object[]{username}, rowMapper);
         } catch (EmptyResultException e){
-            log.log(Level.WARNING, String.format("Username %s not found", e));
+            log.warn("Username {} not found", username, e);
         }
         return ofNullable(twitchUser);
     }

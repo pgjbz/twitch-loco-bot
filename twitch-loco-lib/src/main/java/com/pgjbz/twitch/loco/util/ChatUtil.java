@@ -1,16 +1,23 @@
 package com.pgjbz.twitch.loco.util;
 
 import com.pgjbz.twitch.loco.model.ChatMessage;
+import lombok.extern.java.Log;
 
+
+@Log
 public class ChatUtil {
 
     private ChatUtil(){}
 
     public static ChatMessage extractFields(String messageReceive) {
-        String[] fields = messageReceive.split(":");
-        String message = fields[2];
-        String channel = fields[1].substring(fields[1].indexOf("#") + 1);
-        String user = messageReceive.split("!")[0].replace(":", "");
-        return new ChatMessage(message, user, channel);
+        String message = messageReceive.substring(messageReceive.indexOf(" :") + 2);
+        String channel = messageReceive.substring(messageReceive.indexOf("#") + 1, messageReceive.indexOf(" :"));
+        String user = messageReceive.substring(1, messageReceive.indexOf("!"));
+        try {
+            return new ChatMessage(message, user, channel);
+        } catch (IllegalArgumentException e){
+            log.info("Illegal argument exception with message: " + messageReceive);
+            throw e;
+        }
     }
 }
