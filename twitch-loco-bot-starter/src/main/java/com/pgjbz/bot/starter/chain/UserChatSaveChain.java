@@ -17,23 +17,24 @@ public class UserChatSaveChain extends AbstractChatSaveChain {
     private final TwitchUserRepository twitchUserRepository;
 
     @Override
-    public void doMessageSaving(ChatMessage chatMessage) {
+    public void doChatSave(ChatMessage chatMessage) {
 
         String username = chatMessage.getUser();
         log.info("Searching user {}", username);
-        Optional<TwitchUser> optionalTwitchUser = twitchUserRepository.findByUsername(username);
 
         try {
+            Optional<TwitchUser> optionalTwitchUser = twitchUserRepository.findByUsername(username);
             if (optionalTwitchUser.isEmpty()) {
                 log.info("Saving new user {}", username);
                 twitchUserRepository.insert(new TwitchUser(username));
             }
         } catch (Exception e) {
             log.error("Error on save user {}", username, e);
+            return;
         }
 
         if(nonNull(next))
-            next.doMessageSaving(chatMessage);
+            next.doChatSave(chatMessage);
     }
 
 }

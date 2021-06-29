@@ -14,6 +14,6 @@ public abstract class AbstractChatSaveChain {
         return next.addNext(nextStep);
     }
 
-    public abstract void doMessageSaving(ChatMessage chatMessage);
+    public abstract void doChatSave(ChatMessage chatMessage);
 
 }

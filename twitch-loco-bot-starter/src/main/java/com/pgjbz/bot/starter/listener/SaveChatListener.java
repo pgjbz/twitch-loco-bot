@@ -12,6 +12,6 @@ public class SaveChatListener implements LocoChatListener {
 
     @Override
     public void listenChat(ChatMessage message) {
-        chatSaveChain.doMessageSaving(message);
+        chatSaveChain.doChatSave(message);
     }
 }

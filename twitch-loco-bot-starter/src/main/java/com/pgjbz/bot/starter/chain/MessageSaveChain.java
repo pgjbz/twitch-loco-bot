@@ -10,12 +10,12 @@ import static java.util.Objects.nonNull;
 
 @Log4j2
 @RequiredArgsConstructor
-public class MessageSaveChain extends AbstractChatSaveChain{
+public class MessageSaveChain extends AbstractChatSaveChain {
 
     private final MessageRepository messageRepository;
 
     @Override
-    public void doMessageSaving(ChatMessage chatMessage) {
+    public void doChatSave(ChatMessage chatMessage) {
 
         log.info("Saving message {}", chatMessage.toString());
 
@@ -24,8 +24,9 @@ public class MessageSaveChain extends AbstractChatSaveChain{
             messageRepository.insert(message);
         } catch (Exception e) {
             log.error("Error on save message {}", chatMessage.toString(), e);
+            return;
         }
         if(nonNull(next))
-            next.doMessageSaving(chatMessage);
+            next.doChatSave(chatMessage);
     }
 }
