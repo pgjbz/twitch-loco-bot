@@ -8,11 +8,13 @@ import java.sql.DriverManager;
 import java.util.Map;
 import java.util.logging.Level;
 
+import static com.pgjbz.bot.starter.configs.BotConstants.CONFIG_FILE_SYSTEM_PROPERTY;
+
 @Log
 public class DB {
 
     public static Connection getConnection() {
-        Map<String, String> configurations = Configuration.getConfigs();
+        Map<String, String> configurations = Configuration.getConfigs(System.getProperty(CONFIG_FILE_SYSTEM_PROPERTY));
         Connection connection = null;
         try {
             String username = configurations.get("DATABASE_USER");

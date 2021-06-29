@@ -1,7 +1,9 @@
 package com.pgjbz.twitch.loco.listeners;
 
+import com.pgjbz.twitch.loco.model.ChatMessage;
+
 public interface LocoChatListener {
 
-    void listenChat(String message);
+    void listenChat(ChatMessage message);
 
 }

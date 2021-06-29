@@ -8,7 +8,8 @@ public enum Command {
     PART("PART #$1"),
     @Deprecated
     RECONNECT("RECONNECT"),
-    PING("PING");
+    PING("PING"),
+    PONG("PONG");
 
     private final String pattern;
 

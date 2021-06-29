@@ -23,6 +23,7 @@
         <lombok.version>1.18.2</lombok.version>
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <mockito.version>3.6.28</mockito.version>
+        <log4j2.version>2.14.1</log4j2.version>
     </properties>
 
     <dependencies>

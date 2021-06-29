@@ -23,7 +23,7 @@ public class TwitchUserRepositoryImpl implements TwitchUserRepository {
     @Override
     public boolean insert(TwitchUser twitchUser) {
         String sql = " INSERT INTO USERS(USERNAME, JOIN_DATE) VALUES (?, current_timestamp) ";
-        return jdbcTemplate.update(sql, new Object[]{twitchUser.getUsername()});
+        return jdbcTemplate.update(sql, new Object[]{twitchUser.getUsername()}) > 0 ;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class TwitchUserRepositoryImpl implements TwitchUserRepository {
     @Override
     public Optional<TwitchUser> findByUsername(String username) {
         TwitchUser twitchUser = null;
-        String sql = " SELECT ID, USERNAME, JOIN_DATE FROM USERS WHERE USERNAME = ?";
+        String sql = " SELECT USERNAME, JOIN_DATE FROM USERS WHERE USERNAME = ?";
         try {
             twitchUser = jdbcTemplate.findObject(sql, new Object[]{username}, rowMapper);
         } catch (EmptyResultException e){
@@ -45,6 +45,6 @@ public class TwitchUserRepositoryImpl implements TwitchUserRepository {
     }
 
     private static final RowMapper<TwitchUser> rowMapper = (rs, rowNum) ->
-       new TwitchUser(rs.getLong("id"), rs.getString("username"), rs.getDate("join_date"));
+       new TwitchUser(rs.getString("username"), rs.getDate("join_date"));
 
 }

@@ -19,20 +19,20 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class JdbcTemplateImpl implements JdbcTemplate {
 
-    public boolean update(@NonNull String sql, @NonNull Object[] params) {
+    public int update(@NonNull String sql, @NonNull Object[] params) {
         if(isBlank(sql))
             throw new IllegalArgumentException("SQL cannot be empty");
         try(Connection connection = DB.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql)) {
             for(int i = 0; i < params.length; i++)
                 ps.setObject(i+1, params[i]);
-            return ps.executeUpdate() > 1;
+            return ps.executeUpdate();
         } catch (SQLException e) {
             throw new DatabaseException(e.getMessage());
         }
     }
 
-    public boolean update(String sql) {
+    public int update(String sql) {
         return update(sql, new Object[]{});
     }
 

@@ -7,6 +7,7 @@ import com.pgjbz.twitch.loco.listeners.LocoChatListener;
 import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
+import com.pgjbz.twitch.loco.util.ChatUtil;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 
@@ -71,7 +72,7 @@ public class TwitchLocoConnection extends TwitchConnection {
                         if (isBlank(line)) continue;
                         if (line.contains("PRIVMSG"))
                             for (LocoChatListener locoChatListener : chatListeners)
-                                locoChatListener.listenChat(line);
+                                locoChatListener.listenChat(ChatUtil.extractFields(line));
                         else
                             for (LocoIrcEventsListener eventsListener : eventIrcListeners)
                                 eventsListener.listenEvent(line);
