@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Stream;
 
+import static com.pgjbz.bot.starter.configs.BotConstants.CONFIG_FILE_SYSTEM_PROPERTY;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -18,6 +20,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class Configuration {
 
    private static Map<String, String> configs;
+
+   public static void setEnvironment(String[] args) {
+       String configFile = Stream.of(args).findFirst().orElse("");
+       System.setProperty(CONFIG_FILE_SYSTEM_PROPERTY, configFile);
+   }
 
    @SneakyThrows
    public static Map<String, String> getConfigs(String configFile)  {
