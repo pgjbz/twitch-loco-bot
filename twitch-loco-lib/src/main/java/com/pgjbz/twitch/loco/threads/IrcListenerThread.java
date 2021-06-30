@@ -5,6 +5,7 @@ import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.util.ChatUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
@@ -28,7 +29,8 @@ public class IrcListenerThread implements Runnable {
     private final List<LocoChatListener> chatListeners;
     private final List<LocoIrcEventsListener> eventIrcListeners;
 
-    private static final int RECONNECTION_ATTEMPTS = 3;
+    public static final int RECONNECTION_ATTEMPTS = 3;
+    @Setter
     private boolean keepConnected = true;
 
     @Override
@@ -69,10 +71,6 @@ public class IrcListenerThread implements Runnable {
             twitchConnection.sendCommand(RECONNECT);
         Thread.sleep(5000L);
         tryReconnect(--reconnectionAttempts);
-    }
-
-    public void setKeepConnected(boolean keepConnected) {
-        this.keepConnected = keepConnected;
     }
 
 }
