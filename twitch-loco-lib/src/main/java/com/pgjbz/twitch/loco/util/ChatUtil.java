@@ -1,10 +1,10 @@
 package com.pgjbz.twitch.loco.util;
 
 import com.pgjbz.twitch.loco.model.ChatMessage;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 
-@Log
+@Log4j2
 public class ChatUtil {
 
     private ChatUtil(){}
@@ -16,7 +16,7 @@ public class ChatUtil {
         try {
             return new ChatMessage(message, user, channel);
         } catch (IllegalArgumentException e){
-            log.info("Illegal argument exception with message: " + messageReceive);
+            log.info("Illegal argument exception with message: {}", messageReceive);
             throw e;
         }
     }

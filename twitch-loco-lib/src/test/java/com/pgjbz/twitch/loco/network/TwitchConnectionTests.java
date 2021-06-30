@@ -71,7 +71,6 @@ public class TwitchConnectionTests {
                     doReturn(true).when(mocked).isConnected();
                 })) {
             var botConnection = TwitchConnection.getConnection(twitchLoco);
-            botConnection.close();
             Socket socket = mockedSocket.constructed().get(0);
             assertNotNull(botConnection, "Bot connection cannot be null");
             verify(socket).connect(any(SocketAddress.class));

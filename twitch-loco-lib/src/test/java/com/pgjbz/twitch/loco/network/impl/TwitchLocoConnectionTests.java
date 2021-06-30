@@ -3,12 +3,16 @@ package com.pgjbz.twitch.loco.network.impl;
 import com.pgjbz.twitch.loco.enums.Command;
 import com.pgjbz.twitch.loco.exceptions.TwitchLocoCommandException;
 import com.pgjbz.twitch.loco.exceptions.TwitchLocoCommandParamException;
+import com.pgjbz.twitch.loco.listeners.standards.StandardLocoChatListener;
+import com.pgjbz.twitch.loco.listeners.standards.StandardLocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
+import com.pgjbz.twitch.loco.threads.IrcListenerThread;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.MockedConstruction;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -114,5 +118,46 @@ public class TwitchLocoConnectionTests {
         verify(bufferedWriter).flush();
     }
 
+    @Test
+    void testStartThreadExpectedSuccess()  {
+        try(MockedConstruction<IrcListenerThread> mockedConstruction = mockConstruction(IrcListenerThread.class, (mock, ctx) ->
+                doNothing().when(mock).run())) {
+            twitchConnection.startThread();
+            Runnable run = mockedConstruction.constructed().get(0);
+            verify(run).run();
+        }
+    }
+
+    @Test
+    void testCloseConnectionExpectedSuccess() throws Exception {
+        try(MockedConstruction<IrcListenerThread> mockedConstruction = mockConstruction(IrcListenerThread.class, (mock, ctx) ->
+                doNothing().when(mock).run())) {
+
+            when(twitchLoco.getChannel()).thenReturn("channel");
+            twitchConnection.startThread();
+            twitchConnection.close();
+
+            Runnable run = mockedConstruction.constructed().get(0);
+            verify(run).run();
+            verify(socket).close();
+            verify(inputStreamReader).close();
+            verify(bufferedWriter).close();
+        }
+    }
+
+    @Test
+    void addChaListenerExpectedSuccess() {
+        twitchConnection.addChatListener(new StandardLocoChatListener());
+    }
+
+    @Test
+    void addIrcListenerExpectedSuccess() {
+        twitchConnection.addIrcEventListener(new StandardLocoIrcEventsListener());
+    }
+
+    @Test
+    void testJoinChannelExpectedSuccess() {
+        twitchConnection.joinChannel("channel");
+    }
 
 }

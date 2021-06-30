@@ -28,7 +28,7 @@ public abstract class TwitchConnection {
     public abstract void addIrcEventListener(LocoIrcEventsListener ircEventsListener);
     public abstract void leaveChannel(String channel);
     public abstract void joinChannel(String channel);
-    public abstract void startThreads();
+    public abstract void startThread();
     public abstract void close();
 
     public static TwitchLocoConnection getConnection(TwitchLoco twitchLoco){
