@@ -39,7 +39,7 @@ public class Application {
         var twitchLoco = AbstractTwitchLocoFactory.getInstance().createTwitchLoco( "paulo97loco");
         TwitchLocoConnection connection = TwitchConnection.getConnection(twitchLoco);
 
-        connection.startThreads();
+        connection.startThread();
 
         LocoChatListener defaultChatListener = new StandardLocoChatListener();
         LocoIrcEventsListener defaultIrcEventsListener = new StandardLocoIrcEventsListener();
