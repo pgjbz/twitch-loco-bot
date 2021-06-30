@@ -1,13 +1,13 @@
 package com.pgjbz.twitch.loco.network.impl;
 
 import com.pgjbz.twitch.loco.enums.Command;
-import com.pgjbz.twitch.loco.exceptions.TwitchLocoCommandException;
-import com.pgjbz.twitch.loco.exceptions.TwitchLocoCommandParamException;
-import com.pgjbz.twitch.loco.listeners.standards.StandardLocoChatListener;
-import com.pgjbz.twitch.loco.listeners.standards.StandardLocoIrcEventsListener;
+import com.pgjbz.twitch.loco.exception.TwitchLocoCommandException;
+import com.pgjbz.twitch.loco.exception.TwitchLocoCommandParamException;
+import com.pgjbz.twitch.loco.listener.standards.StandardLocoChatListener;
+import com.pgjbz.twitch.loco.listener.standards.StandardLocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
-import com.pgjbz.twitch.loco.threads.IrcListenerThread;
+import com.pgjbz.twitch.loco.thread.IrcListenerThread;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

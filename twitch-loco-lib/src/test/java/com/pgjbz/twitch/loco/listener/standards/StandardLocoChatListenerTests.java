@@ -1,4 +1,4 @@
-package com.pgjbz.twitch.loco.listeners.standards;
+package com.pgjbz.twitch.loco.listener.standards;
 
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import org.junit.jupiter.api.BeforeEach;

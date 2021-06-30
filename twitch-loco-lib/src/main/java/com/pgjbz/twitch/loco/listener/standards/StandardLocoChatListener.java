@@ -1,6 +1,6 @@
-package com.pgjbz.twitch.loco.listeners.standards;
+package com.pgjbz.twitch.loco.listener.standards;
 
-import com.pgjbz.twitch.loco.listeners.LocoChatListener;
+import com.pgjbz.twitch.loco.listener.LocoChatListener;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 
 public class StandardLocoChatListener implements LocoChatListener {

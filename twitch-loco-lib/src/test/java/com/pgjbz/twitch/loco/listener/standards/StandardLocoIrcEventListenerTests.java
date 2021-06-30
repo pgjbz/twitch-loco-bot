@@ -1,4 +1,4 @@
-package com.pgjbz.twitch.loco.listeners.standards;
+package com.pgjbz.twitch.loco.listener.standards;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

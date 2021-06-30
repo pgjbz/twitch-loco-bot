@@ -1,4 +1,4 @@
-package com.pgjbz.twitch.loco.listeners;
+package com.pgjbz.twitch.loco.listener;
 
 import com.pgjbz.twitch.loco.model.ChatMessage;
 

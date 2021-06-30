@@ -1,4 +1,4 @@
-package com.pgjbz.twitch.loco.listeners;
+package com.pgjbz.twitch.loco.listener;
 
 public interface LocoIrcEventsListener {
 

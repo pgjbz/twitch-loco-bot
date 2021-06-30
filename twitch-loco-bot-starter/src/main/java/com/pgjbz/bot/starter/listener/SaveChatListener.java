@@ -1,7 +1,7 @@
 package com.pgjbz.bot.starter.listener;
 
 import com.pgjbz.bot.starter.chain.AbstractChatSaveChain;
-import com.pgjbz.twitch.loco.listeners.LocoChatListener;
+import com.pgjbz.twitch.loco.listener.LocoChatListener;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
 

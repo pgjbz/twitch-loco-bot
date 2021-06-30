@@ -1,6 +1,6 @@
-package com.pgjbz.twitch.loco.listeners.standards;
+package com.pgjbz.twitch.loco.listener.standards;
 
-import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
+import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 
 public class StandardLocoIrcEventsListener implements LocoIrcEventsListener {
 

@@ -1,6 +1,6 @@
 package com.pgjbz.bot.starter.listener;
 
-import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
+import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
 

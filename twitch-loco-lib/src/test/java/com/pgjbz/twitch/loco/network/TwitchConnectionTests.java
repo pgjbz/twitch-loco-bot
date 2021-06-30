@@ -1,6 +1,6 @@
 package com.pgjbz.twitch.loco.network;
 
-import com.pgjbz.twitch.loco.exceptions.TwitchLocoConnectionException;
+import com.pgjbz.twitch.loco.exception.TwitchLocoConnectionException;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

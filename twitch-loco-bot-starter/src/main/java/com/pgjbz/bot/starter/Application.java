@@ -10,14 +10,21 @@ import com.pgjbz.bot.starter.factory.AbstractTwitchUserRepositoryFactory;
 import com.pgjbz.bot.starter.listener.JoinChatListener;
 import com.pgjbz.bot.starter.listener.SaveChatListener;
 import com.pgjbz.twitch.loco.enums.Command;
-import com.pgjbz.twitch.loco.listeners.LocoChatListener;
-import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
-import com.pgjbz.twitch.loco.listeners.standards.StandardLocoChatListener;
-import com.pgjbz.twitch.loco.listeners.standards.StandardLocoIrcEventsListener;
+import com.pgjbz.twitch.loco.listener.LocoChatListener;
+import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
+import com.pgjbz.twitch.loco.listener.standards.StandardBotStreamInfoEventListener;
+import com.pgjbz.twitch.loco.listener.standards.StandardLocoChatListener;
+import com.pgjbz.twitch.loco.listener.standards.StandardLocoIrcEventsListener;
+import com.pgjbz.twitch.loco.model.Chatters;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.network.impl.TwitchLocoConnection;
+import com.pgjbz.twitch.loco.schedule.BotStreamInfoEventSchedule;
+import com.pgjbz.twitch.loco.service.impl.StreamInfoServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.List;
+import java.util.Random;
 
 @Log4j2
 public class Application {
@@ -55,6 +62,16 @@ public class Application {
                 connection.sendCommand(Command.PONG);
         });
 
+        Random random = new Random();
+        BotStreamInfoEventSchedule botStreamInfoEventSchedule = new BotStreamInfoEventSchedule(new StreamInfoServiceImpl(), twitchLoco);
+        botStreamInfoEventSchedule.addBotStreamInfoEventListener(new StandardBotStreamInfoEventListener());
+        botStreamInfoEventSchedule.addBotStreamInfoEventListener(streamInfo -> {
+            Chatters chatters = streamInfo.getChatters();
+            List<String> viewers = chatters.getViewers();
+            String message = "@" + viewers.get(random.nextInt(viewers.size())) + ", oi vem sempre aqui? rs";
+            connection.sendMessage(message);
+        });
+        botStreamInfoEventSchedule.startSchedule(5L);
     }
 
 }

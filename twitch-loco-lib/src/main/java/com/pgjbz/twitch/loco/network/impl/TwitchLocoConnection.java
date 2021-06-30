@@ -1,13 +1,13 @@
 package com.pgjbz.twitch.loco.network.impl;
 
 import com.pgjbz.twitch.loco.enums.Command;
-import com.pgjbz.twitch.loco.exceptions.TwitchLocoCommandException;
-import com.pgjbz.twitch.loco.exceptions.TwitchLocoCommandParamException;
-import com.pgjbz.twitch.loco.listeners.LocoChatListener;
-import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
+import com.pgjbz.twitch.loco.exception.TwitchLocoCommandException;
+import com.pgjbz.twitch.loco.exception.TwitchLocoCommandParamException;
+import com.pgjbz.twitch.loco.listener.LocoChatListener;
+import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
-import com.pgjbz.twitch.loco.threads.IrcListenerThread;
+import com.pgjbz.twitch.loco.thread.IrcListenerThread;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;

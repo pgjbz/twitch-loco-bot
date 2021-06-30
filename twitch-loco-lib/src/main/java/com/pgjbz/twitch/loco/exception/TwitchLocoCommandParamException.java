@@ -1,4 +1,4 @@
-package com.pgjbz.twitch.loco.exceptions;
+package com.pgjbz.twitch.loco.exception;
 
 public class TwitchLocoCommandParamException extends RuntimeException {
 

@@ -1,7 +1,7 @@
-package com.pgjbz.twitch.loco.threads;
+package com.pgjbz.twitch.loco.thread;
 
-import com.pgjbz.twitch.loco.listeners.LocoChatListener;
-import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
+import com.pgjbz.twitch.loco.listener.LocoChatListener;
+import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import org.junit.jupiter.api.BeforeEach;

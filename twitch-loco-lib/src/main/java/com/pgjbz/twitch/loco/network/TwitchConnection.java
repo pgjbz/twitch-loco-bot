@@ -1,9 +1,9 @@
 package com.pgjbz.twitch.loco.network;
 
 import com.pgjbz.twitch.loco.enums.Command;
-import com.pgjbz.twitch.loco.exceptions.TwitchLocoConnectionException;
-import com.pgjbz.twitch.loco.listeners.LocoChatListener;
-import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
+import com.pgjbz.twitch.loco.exception.TwitchLocoConnectionException;
+import com.pgjbz.twitch.loco.listener.LocoChatListener;
+import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.impl.TwitchLocoConnection;
 
@@ -15,8 +15,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-import static com.pgjbz.twitch.loco.constants.TwitchConstants.TWITCH_IRC_PORT;
-import static com.pgjbz.twitch.loco.constants.TwitchConstants.TWITCH_IRC_URL;
+import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_PORT;
+import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_URL;
 import static com.pgjbz.twitch.loco.enums.Command.NICK;
 import static com.pgjbz.twitch.loco.enums.Command.PASS;
 

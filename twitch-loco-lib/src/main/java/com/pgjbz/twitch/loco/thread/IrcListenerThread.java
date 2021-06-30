@@ -1,7 +1,7 @@
-package com.pgjbz.twitch.loco.threads;
+package com.pgjbz.twitch.loco.thread;
 
-import com.pgjbz.twitch.loco.listeners.LocoChatListener;
-import com.pgjbz.twitch.loco.listeners.LocoIrcEventsListener;
+import com.pgjbz.twitch.loco.listener.LocoChatListener;
+import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.util.ChatUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.List;
 
-import static com.pgjbz.twitch.loco.constants.TwitchConstants.TWITCH_IRC_PORT;
-import static com.pgjbz.twitch.loco.constants.TwitchConstants.TWITCH_IRC_URL;
+import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_PORT;
+import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_URL;
 import static com.pgjbz.twitch.loco.enums.Command.RECONNECT;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
