@@ -4,7 +4,7 @@ public enum Command {
     PASS("PASS oauth:$1"),
     NICK("NICK $1"),
     JOIN("JOIN #$1"),
-    MESSAGE("PRIVMSG #$1 : $2"),
+    MESSAGE("PRIVMSG #$1 :$2"),
     PART("PART #$1"),
     @Deprecated
     RECONNECT("RECONNECT"),
