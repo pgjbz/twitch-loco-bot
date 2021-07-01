@@ -1,12 +1,9 @@
 package com.pgjbz.bot.starter.chain;
 
-import com.pgjbz.bot.starter.model.TwitchUser;
-import com.pgjbz.bot.starter.repository.TwitchUserRepository;
+import com.pgjbz.bot.starter.service.UserService;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import java.util.Optional;
 
 import static java.util.Objects.nonNull;
 
@@ -14,20 +11,15 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class UserChatSaveChain extends AbstractChatSaveChain {
 
-    private final TwitchUserRepository twitchUserRepository;
+    private final UserService userService;
 
     @Override
     public void doChatSave(ChatMessage chatMessage) {
 
         String username = chatMessage.getUser();
-        log.info("Searching user {}", username);
-
+        log.info("Perform user validation for user {}", username);
         try {
-            Optional<TwitchUser> optionalTwitchUser = twitchUserRepository.findByUsername(username);
-            if (optionalTwitchUser.isEmpty()) {
-                log.info("Saving new user {}", username);
-                twitchUserRepository.insert(new TwitchUser(username));
-            }
+            userService.saveIfNotExists(username);
         } catch (Exception e) {
             log.error("Error on save user {}", username, e);
             return;

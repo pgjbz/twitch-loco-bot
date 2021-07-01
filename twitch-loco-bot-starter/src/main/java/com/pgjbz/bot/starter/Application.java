@@ -2,10 +2,7 @@ package com.pgjbz.bot.starter;
 
 import com.pgjbz.bot.starter.chain.*;
 import com.pgjbz.bot.starter.configs.Configuration;
-import com.pgjbz.bot.starter.factory.AbstractMessageRepositoryFactory;
-import com.pgjbz.bot.starter.factory.AbstractTokenRepositoryFactory;
-import com.pgjbz.bot.starter.factory.AbstractTwitchLocoFactory;
-import com.pgjbz.bot.starter.factory.AbstractTwitchUserRepositoryFactory;
+import com.pgjbz.bot.starter.factory.*;
 import com.pgjbz.bot.starter.listener.JoinChatListener;
 import com.pgjbz.bot.starter.listener.SaveChatListener;
 import com.pgjbz.bot.starter.listener.TokenStreamListener;
@@ -35,14 +32,14 @@ public class Application {
         Configuration.setEnvironment(args);
 
         var messageRepository = AbstractMessageRepositoryFactory.getInstance().createMessageRepository();
-        var twitchUserRepository = AbstractTwitchUserRepositoryFactory.getInstance().createTwitchUserRepository();
         var tokenRepository = AbstractTokenRepositoryFactory.getInstance().createTokenRepository();
-        AbstractChatSaveChain userChatSaveChain = new UserChatSaveChain(twitchUserRepository);
+        var userService = AbstractUserServiceFactory.getInstance().createUserService();
+        AbstractChatSaveChain userChatSaveChain = new UserChatSaveChain(userService);
         AbstractChatSaveChain messageChatSaveChain = new MessageSaveChain(messageRepository);
         userChatSaveChain.addNext(messageChatSaveChain);
         LocoChatListener chatSaveListener = new SaveChatListener(userChatSaveChain);
 
-        AbstractTokenChain userCheckTokenChain = new UserCheckTokenChain(twitchUserRepository);
+        AbstractTokenChain userCheckTokenChain = new UserCheckTokenChain(userService);
         AbstractTokenChain createUnitTokenChain = new CreateUnitTokenChain(tokenRepository);
         AbstractTokenChain addUnitTokenChain = new AddUnitTokenChain(tokenRepository);
 
@@ -50,7 +47,7 @@ public class Application {
                 .addNext(createUnitTokenChain)
                 .addNext(addUnitTokenChain);
 
-        var twitchLoco = AbstractTwitchLocoFactory.getInstance().createTwitchLoco( "paulo97loco");
+        var twitchLoco = AbstractTwitchLocoFactory.getInstance().createTwitchLoco();
         TwitchLocoConnection connection = TwitchConnection.getConnection(twitchLoco);
 
         connection.startThread();
@@ -73,7 +70,7 @@ public class Application {
         BotStreamInfoEventSchedule botStreamInfoEventSchedule = new BotStreamInfoEventSchedule(new StreamInfoServiceImpl(), twitchLoco);
         botStreamInfoEventSchedule.addBotStreamInfoEventListener(new StandardBotStreamInfoEventListener());
         botStreamInfoEventSchedule.addBotStreamInfoEventListener(new TokenStreamListener(userCheckTokenChain));
-        botStreamInfoEventSchedule.startSchedule(1L);
+        botStreamInfoEventSchedule.startSchedule(5L);
     }
 
 }

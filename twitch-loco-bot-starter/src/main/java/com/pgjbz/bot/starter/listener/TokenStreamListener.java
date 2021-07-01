@@ -9,6 +9,7 @@ import com.pgjbz.twitch.loco.model.StreamInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -19,20 +20,19 @@ public class TokenStreamListener implements BotStreamInfoEventListener {
 
     @Override
     public void listenBotEvent(StreamInfo streamInfo) {
+        long start = System.currentTimeMillis();
         log.info("Event receive, starting process {} chatters...", streamInfo.getChatterCounter());
         Chatters chatters = streamInfo.getChatters();
-        chatters.getViewers().addAll(chatters.getModerators());
-        chatters.getViewers().addAll(chatters.getAdmins());
-        chatters.getViewers().addAll(chatters.getGlobalMods());
-        chatters.getViewers().addAll(chatters.getVips());
-        chatters.getViewers().addAll(chatters.getStaff());
-        for(String viewer: chatters.getViewers()) {
-            Optional<String> streamer = streamInfo.getChatters().getBroadcaster().stream().findAny();
-            if(streamer.isEmpty()) {
-                log.warn("No streamer founded");
-                break;
-            }
-            abstractTokenChain.doAddUnits(new Token(new TokenPk(viewer, streamer.get()), null));
-        }
+        List<String> viewers = chatters.getViewers();
+        viewers.addAll(chatters.getModerators());
+        viewers.addAll(chatters.getAdmins());
+        viewers.addAll(chatters.getGlobalMods());
+        viewers.addAll(chatters.getVips());
+        viewers.addAll(chatters.getStaff());
+        Optional<String> streamer = streamInfo.getChatters().getBroadcaster().stream().findAny();
+        streamer.ifPresentOrElse(s -> viewers.parallelStream().forEach(viewer -> {
+            abstractTokenChain.doAddUnits(new Token(new TokenPk(viewer, s), null));
+        }), () -> log.info("Empty streamer..."));
+        log.info("Finish token distribution in {}ms", (System.currentTimeMillis() - start));
     }
 }
