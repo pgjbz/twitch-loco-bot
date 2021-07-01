@@ -28,7 +28,7 @@ public class TwitchUserRepositoryImpl implements TwitchUserRepository {
     @Override
     public List<TwitchUser> findAll() {
         String sql = " SELECT ID, USERNAME, JOIN_DATE FROM USERS";
-        return jdbcTemplate.findAll(sql, rowMapper);
+        return jdbcTemplate.query(sql, rowMapper);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class TwitchUserRepositoryImpl implements TwitchUserRepository {
         TwitchUser twitchUser = null;
         String sql = " SELECT USERNAME, JOIN_DATE FROM USERS WHERE USERNAME = ?";
         try {
-            twitchUser = jdbcTemplate.findObject(sql, new Object[]{username}, rowMapper);
+            twitchUser = jdbcTemplate.queryForObject(sql, new Object[]{username}, rowMapper);
         } catch (EmptyResultException e){
             log.warn("Username {} not found", username, e);
         }

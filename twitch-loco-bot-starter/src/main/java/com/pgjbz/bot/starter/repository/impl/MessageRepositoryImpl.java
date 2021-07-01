@@ -42,7 +42,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         sql.append(" FROM ");
         sql.append("   MESSAGES ");
         try {
-            messages = jdbcTemplate.findAll(sql.toString(), rowMapper);
+            messages = jdbcTemplate.query(sql.toString(), rowMapper);
         } catch (EmptyResultException e) {
             log.info("No results founded for messages");
         }

@@ -36,7 +36,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         return update(sql, new Object[]{});
     }
 
-    public <T> T findObject(@NonNull String sql, @NonNull Object[] params, @NonNull RowMapper<T> rowMapper) {
+    public <T> T queryForObject(@NonNull String sql, @NonNull Object[] params, @NonNull RowMapper<T> rowMapper) {
         try(Connection connection = DB.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql)) {
             for(int i = 0; i < params.length; i++)
@@ -56,7 +56,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         }
     }
 
-    public <T> List<T> findAll(String sql, @NonNull Object[] params, @NonNull RowMapper<T> rowMapper) {
+    public <T> List<T> query(String sql, @NonNull Object[] params, @NonNull RowMapper<T> rowMapper) {
         try(Connection connection = DB.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql)) {
             for(int i = 0; i < params.length; i++)
@@ -74,8 +74,8 @@ public class JdbcTemplateImpl implements JdbcTemplate {
         }
     }
 
-    public <T> List<T> findAll(String sql, RowMapper<T> rowMapper) {
-        return findAll(sql, new Object[]{}, rowMapper);
+    public <T> List<T> query(String sql, RowMapper<T> rowMapper) {
+        return query(sql, new Object[]{}, rowMapper);
     }
 
 }
