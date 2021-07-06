@@ -23,33 +23,36 @@ public class TokenStreamListener implements BotStreamInfoEventListener {
 
     private final AbstractTokenChain abstractTokenChain;
 
-
     @Override
     public void listenBotEvent(StreamInfo streamInfo) {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         log.info("Event receive, starting process {} chatters...", streamInfo.getChatterCounter());
+        final ExecutorService executorService = Executors.newFixedThreadPool(5);
         Chatters chatters = streamInfo.getChatters();
-        List<String> viewers = chatters.getViewers();
-        viewers.addAll(chatters.getModerators());
-        viewers.addAll(chatters.getAdmins());
-        viewers.addAll(chatters.getGlobalMods());
-        viewers.addAll(chatters.getVips());
-        viewers.addAll(chatters.getStaff());
-        List<Future<String>> futures = new CopyOnWriteArrayList<>();
+        List<String> viewers = getViewers(chatters);
+        final List<Future<?>> futures = new CopyOnWriteArrayList<>();
         Optional<String> streamer = streamInfo.getChatters().getBroadcaster().stream().findAny();
         streamer.ifPresentOrElse(s ->
                 futures.addAll(
-                        viewers.stream().map(viewer -> executorService.submit(() -> {
-                                    abstractTokenChain.doAddUnits(new Token(new TokenPk(viewer, s), null));
-                                    return viewer;
-                                })
-                        ).collect(Collectors.toList())
-                ), () -> log.info("Empty streamer..."));
+                        viewers.stream().map(viewer -> executorService.submit(() ->
+                            abstractTokenChain.doAddUnits(new Token(new TokenPk(viewer, s), null)))
+                ).collect(Collectors.toList())), () -> log.info("Empty streamer..."));
         do
             futures.removeIf(Future::isDone);
         while (!futures.isEmpty());
         executorService.shutdown();
         log.info("Finish token distribution in {}ms", (System.currentTimeMillis() - start));
     }
+
+    private List<String> getViewers(Chatters chatters) {
+        log.info("Joining all chatters");
+        List<String> viewers = chatters.getViewers();
+        viewers.addAll(chatters.getModerators());
+        viewers.addAll(chatters.getAdmins());
+        viewers.addAll(chatters.getGlobalMods());
+        viewers.addAll(chatters.getVips());
+        viewers.addAll(chatters.getStaff());
+        return viewers;
+    }
+
 }

@@ -2,7 +2,10 @@ package com.pgjbz.bot.starter;
 
 import com.pgjbz.bot.starter.chain.*;
 import com.pgjbz.bot.starter.configs.Configuration;
-import com.pgjbz.bot.starter.factory.*;
+import com.pgjbz.bot.starter.factory.AbstractMessageRepositoryFactory;
+import com.pgjbz.bot.starter.factory.AbstractTokenRepositoryFactory;
+import com.pgjbz.bot.starter.factory.AbstractTwitchLocoFactory;
+import com.pgjbz.bot.starter.factory.AbstractUserServiceFactory;
 import com.pgjbz.bot.starter.listener.JoinChatListener;
 import com.pgjbz.bot.starter.listener.SaveChatListener;
 import com.pgjbz.bot.starter.listener.TokenStreamListener;
@@ -18,8 +21,6 @@ import com.pgjbz.twitch.loco.schedule.BotStreamInfoEventSchedule;
 import com.pgjbz.twitch.loco.service.impl.StreamInfoServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-
-import java.util.Random;
 
 @Log4j2
 public class Application {
@@ -66,7 +67,7 @@ public class Application {
                 connection.sendCommand(Command.PONG);
         });
 
-        Random random = new Random();
+       
         BotStreamInfoEventSchedule botStreamInfoEventSchedule = new BotStreamInfoEventSchedule(new StreamInfoServiceImpl(), twitchLoco);
         botStreamInfoEventSchedule.addBotStreamInfoEventListener(new StandardBotStreamInfoEventListener());
         botStreamInfoEventSchedule.addBotStreamInfoEventListener(new TokenStreamListener(userCheckTokenChain));

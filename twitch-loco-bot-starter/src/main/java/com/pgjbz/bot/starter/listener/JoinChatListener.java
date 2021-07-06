@@ -12,6 +12,6 @@ public class JoinChatListener implements LocoIrcEventsListener {
     @Override
     public void listenEvent(String event) {
         if(event.matches(".*366.*/NAMES\\slist"))
-            twitchConnection.sendMessage("UOOOUU");
+            twitchConnection.sendMessage("to na area, derrubou é penalti");
     }
 }
