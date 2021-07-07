@@ -2,6 +2,7 @@ package com.pgjbz.twitch.loco.thread;
 
 import com.pgjbz.twitch.loco.listener.LocoChatListener;
 import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
+import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.util.ChatUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.List;
 
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_PORT;
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_URL;
-import static com.pgjbz.twitch.loco.enums.Command.RECONNECT;
+import static com.pgjbz.twitch.loco.enums.CommandSend.RECONNECT;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Log4j2
@@ -42,9 +43,11 @@ public class IrcListenerThread implements Runnable {
                 while (socket.isConnected() && keepConnected) {
                     line = bufferedReader.readLine();
                     if (isBlank(line)) continue;
-                    if (line.contains("PRIVMSG"))
+                    if (line.contains("PRIVMSG")) {
+                        ChatMessage message = ChatUtil.extractFields(line);
                         for (LocoChatListener locoChatListener : chatListeners)
-                            locoChatListener.listenChat(ChatUtil.extractFields(line));
+                            locoChatListener.listenChat(message);
+                    }
                     else
                         for (LocoIrcEventsListener eventsListener : eventIrcListeners)
                             eventsListener.listenEvent(line);

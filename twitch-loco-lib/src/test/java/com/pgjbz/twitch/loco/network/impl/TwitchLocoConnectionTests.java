@@ -1,6 +1,6 @@
 package com.pgjbz.twitch.loco.network.impl;
 
-import com.pgjbz.twitch.loco.enums.Command;
+import com.pgjbz.twitch.loco.enums.CommandSend;
 import com.pgjbz.twitch.loco.exception.TwitchLocoCommandException;
 import com.pgjbz.twitch.loco.exception.TwitchLocoCommandParamException;
 import com.pgjbz.twitch.loco.listener.standards.StandardLocoChatListener;
@@ -41,9 +41,9 @@ public class TwitchLocoConnectionTests {
     }
 
     @ParameterizedTest
-    @EnumSource(Command.class)
-    void testSendCommandExpectedSuccess(Command command) throws Exception {
-        int paramsLength = getCommandArgumentsLength(command, false);
+    @EnumSource(CommandSend.class)
+    void testSendCommandExpectedSuccess(CommandSend commandSend) throws Exception {
+        int paramsLength = getCommandArgumentsLength(commandSend, false);
         String[] stringArr = new String[paramsLength];
 
         for(int i = 0; i < paramsLength; i++)
@@ -51,26 +51,26 @@ public class TwitchLocoConnectionTests {
 
         doNothing().when(bufferedWriter).write(anyString());
         doNothing().when(bufferedWriter).flush();
-        twitchConnection.sendCommand(command, stringArr);
+        twitchConnection.sendCommand(commandSend, stringArr);
         verify(bufferedWriter).write(anyString());
         verify(bufferedWriter).flush();
     }
 
     @ParameterizedTest
-    @EnumSource(Command.class)
-    void testSendCommandExpectedTwitchLocoCommandParamException(Command command) {
-        int paramsLength = getCommandArgumentsLength(command, true);
+    @EnumSource(CommandSend.class)
+    void testSendCommandExpectedTwitchLocoCommandParamException(CommandSend commandSend) {
+        int paramsLength = getCommandArgumentsLength(commandSend, true);
         String[] stringArr = new String[paramsLength > 0 ? paramsLength : 2];
 
         for(int i = 0; i < paramsLength; i++)
             stringArr[i] = ""+i;
-        assertThrows(TwitchLocoCommandParamException.class, () -> twitchConnection.sendCommand(command, stringArr));
+        assertThrows(TwitchLocoCommandParamException.class, () -> twitchConnection.sendCommand(commandSend, stringArr));
     }
 
     @ParameterizedTest
-    @EnumSource(Command.class)
-    void testSendCommandExpectedTwitchLocoCommandException(Command command) throws Exception {
-        int paramsLength = getCommandArgumentsLength(command, false);
+    @EnumSource(CommandSend.class)
+    void testSendCommandExpectedTwitchLocoCommandException(CommandSend commandSend) throws Exception {
+        int paramsLength = getCommandArgumentsLength(commandSend, false);
         String[] stringArr = new String[paramsLength];
 
         for(int i = 0; i < paramsLength; i++)
@@ -78,7 +78,7 @@ public class TwitchLocoConnectionTests {
 
         doThrow(IOException.class).when(bufferedWriter).write(anyString());
 
-        assertThrows(TwitchLocoCommandException.class, () -> twitchConnection.sendCommand(command, stringArr));
+        assertThrows(TwitchLocoCommandException.class, () -> twitchConnection.sendCommand(commandSend, stringArr));
         verify(bufferedWriter).write(anyString());
     }
 
@@ -89,11 +89,11 @@ public class TwitchLocoConnectionTests {
 
     @Test
     void testSendCommandNullArrayExpectedNullPointerException() {
-        assertThrows(NullPointerException.class, () -> twitchConnection.sendCommand(Command.MESSAGE, null));
+        assertThrows(NullPointerException.class, () -> twitchConnection.sendCommand(CommandSend.MESSAGE, null));
     }
 
-    private int getCommandArgumentsLength(Command command, boolean mismatch) {
-        String commandPattern = command.getPattern();
+    private int getCommandArgumentsLength(CommandSend commandSend, boolean mismatch) {
+        String commandPattern = commandSend.getPattern();
         return commandPattern.replaceAll("[^$]", "").length() - (mismatch ? 1 : 0 );
     }
 

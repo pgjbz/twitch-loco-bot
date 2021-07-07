@@ -1,6 +1,6 @@
 package com.pgjbz.twitch.loco.network.impl;
 
-import com.pgjbz.twitch.loco.enums.Command;
+import com.pgjbz.twitch.loco.enums.CommandSend;
 import com.pgjbz.twitch.loco.exception.TwitchLocoCommandException;
 import com.pgjbz.twitch.loco.exception.TwitchLocoCommandParamException;
 import com.pgjbz.twitch.loco.listener.LocoChatListener;
@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.pgjbz.twitch.loco.enums.Command.*;
+import static com.pgjbz.twitch.loco.enums.CommandSend.*;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -70,8 +70,8 @@ public class TwitchLocoConnection extends TwitchConnection {
     }
 
     @Override
-    public void sendCommand(@NonNull Command command, @NonNull  String... targets) {
-        String commandPattern = command.getPattern();
+    public void sendCommand(@NonNull CommandSend commandSend, @NonNull  String... targets) {
+        String commandPattern = commandSend.getPattern();
         int paramsLength = commandPattern.replaceAll("[^$]", "").length();
         if(paramsLength != targets.length)
             throw new TwitchLocoCommandParamException(String.format("Invalid arguments length, command required exact %s arguments", paramsLength));

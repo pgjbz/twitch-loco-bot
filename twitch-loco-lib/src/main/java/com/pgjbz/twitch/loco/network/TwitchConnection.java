@@ -1,6 +1,6 @@
 package com.pgjbz.twitch.loco.network;
 
-import com.pgjbz.twitch.loco.enums.Command;
+import com.pgjbz.twitch.loco.enums.CommandSend;
 import com.pgjbz.twitch.loco.exception.TwitchLocoConnectionException;
 import com.pgjbz.twitch.loco.listener.LocoChatListener;
 import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
@@ -17,13 +17,13 @@ import java.net.SocketAddress;
 
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_PORT;
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_URL;
-import static com.pgjbz.twitch.loco.enums.Command.NICK;
-import static com.pgjbz.twitch.loco.enums.Command.PASS;
+import static com.pgjbz.twitch.loco.enums.CommandSend.NICK;
+import static com.pgjbz.twitch.loco.enums.CommandSend.PASS;
 
 public abstract class TwitchConnection {
 
     public abstract void sendMessage(String message);
-    public abstract void sendCommand(Command command, String ...targets);
+    public abstract void sendCommand(CommandSend commandSend, String ...targets);
     public abstract void addChatListener(LocoChatListener chatListener);
     public abstract void addIrcEventListener(LocoIrcEventsListener ircEventsListener);
     public abstract void leaveChannel(String channel);
@@ -39,6 +39,9 @@ public abstract class TwitchConnection {
         twitchLocoConnection.sendCommand(PASS, twitchLoco.getOauth());
         twitchLocoConnection.sendCommand(NICK, twitchLoco.getUsername());
         twitchLocoConnection.joinChannel(twitchLoco.getChannel());
+        twitchLocoConnection.sendCommand(CommandSend.CAP_COMMANDS);
+        twitchLocoConnection.sendCommand(CommandSend.CAP_MEMBERSHIP);
+        twitchLocoConnection.sendCommand(CommandSend.CAP_TAG);
         return twitchLocoConnection;
     }
 

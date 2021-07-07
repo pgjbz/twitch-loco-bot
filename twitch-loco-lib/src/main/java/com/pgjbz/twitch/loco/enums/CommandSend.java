@@ -1,6 +1,6 @@
 package com.pgjbz.twitch.loco.enums;
 
-public enum Command {
+public enum CommandSend {
     PASS("PASS oauth:$1"),
     NICK("NICK $1"),
     JOIN("JOIN #$1"),
@@ -9,11 +9,14 @@ public enum Command {
     @Deprecated
     RECONNECT("RECONNECT"),
     PING("PING"),
-    PONG("PONG");
+    PONG("PONG :tmi.twitch.tv"),
+    CAP_COMMANDS("CAP REQ :twitch.tv/commands"),
+    CAP_MEMBERSHIP("CAP REQ :twitch.tv/membership"),
+    CAP_TAG("CAP REQ :twitch.tv/tags");
 
     private final String pattern;
 
-    Command(String command) {
+    CommandSend(String command) {
         this.pattern = command;
     }
 

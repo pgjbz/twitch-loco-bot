@@ -4,7 +4,6 @@ import com.pgjbz.twitch.loco.model.ChatMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 
 public class StandardLocoChatListenerTests {
@@ -21,8 +20,4 @@ public class StandardLocoChatListenerTests {
         standardLocoChatListener.listenChat(new ChatMessage("message", "user", "channel"));
     }
 
-    @Test
-    void testStandardLocoChatListenerExpectedNullPointerException (){
-        assertThrows(NullPointerException.class, () -> standardLocoChatListener.listenChat(null));
-    }
 }
