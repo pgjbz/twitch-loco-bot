@@ -9,7 +9,8 @@ import com.pgjbz.bot.starter.factory.AbstractUserServiceFactory;
 import com.pgjbz.bot.starter.listener.JoinChatListener;
 import com.pgjbz.bot.starter.listener.SaveChatListener;
 import com.pgjbz.bot.starter.listener.TokenStreamListener;
-import com.pgjbz.twitch.loco.enums.Command;
+import com.pgjbz.twitch.loco.enums.CommandReceive;
+import com.pgjbz.twitch.loco.enums.CommandSend;
 import com.pgjbz.twitch.loco.listener.LocoChatListener;
 import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.listener.standards.StandardBotStreamInfoEventListener;
@@ -22,6 +23,10 @@ import com.pgjbz.twitch.loco.service.impl.StreamInfoServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+import static java.util.Objects.nonNull;
+
 @Log4j2
 public class Application {
 
@@ -29,6 +34,8 @@ public class Application {
     public static void main(String[] args) {
 
         log.info("Starting bot...");
+
+
 
         Configuration.setEnvironment(args);
 
@@ -63,9 +70,40 @@ public class Application {
         connection.addIrcEventListener(defaultIrcEventsListener);
         connection.addIrcEventListener(joinChannelListener);
         connection.addIrcEventListener(event -> {
-            if(event.startsWith("PING"))
-                connection.sendCommand(Command.PONG);
+            if(nonNull(event) && event.getCommandReceive() == CommandReceive.PING)
+                connection.sendCommand(CommandSend.PONG);
         });
+
+        AtomicReference<Long> messageSend = new AtomicReference<>(System.currentTimeMillis());
+
+
+        //Queue to usernotice
+
+        //Queue<String> users = new PriorityQueue<>();
+
+        connection.addIrcEventListener(event -> {
+            try {
+                if (nonNull(event) && event.getCommandReceive() == CommandReceive.USERNOTICE && (messageSend.get() + 30000) <= System.currentTimeMillis()) {
+                    connection.sendMessage(event.getUsername() + " to só fazendo um teste!");
+                    messageSend.set(System.currentTimeMillis());
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        });
+
+
+        //Queue to send messages
+        connection.addIrcEventListener(event -> {
+            if(nonNull(event) && event.getCommandReceive() == CommandReceive.JOIN && (messageSend.get() + 30000) <= System.currentTimeMillis() ){
+                connection.sendMessage(event.getUsername() + " eae, tranquilidade total ou nada bem?");
+                messageSend.set(System.currentTimeMillis());
+            }
+        });
+
+
+
+        //CAPs, not cap tags because is bad
 
        
         BotStreamInfoEventSchedule botStreamInfoEventSchedule = new BotStreamInfoEventSchedule(new StreamInfoServiceImpl(), twitchLoco);

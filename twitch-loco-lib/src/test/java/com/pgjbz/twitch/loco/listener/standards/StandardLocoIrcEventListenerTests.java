@@ -1,5 +1,7 @@
 package com.pgjbz.twitch.loco.listener.standards;
 
+import com.pgjbz.twitch.loco.enums.CommandReceive;
+import com.pgjbz.twitch.loco.model.IrcEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +18,7 @@ public class StandardLocoIrcEventListenerTests {
 
     @Test
     void testStandardLocoChatListenerExpectedSuccess() {
-        standardLocoChatListener.listenEvent("string");
+        standardLocoChatListener.listenEvent(new IrcEvent(CommandReceive.JOIN, "test", "test"));
     }
 
 }

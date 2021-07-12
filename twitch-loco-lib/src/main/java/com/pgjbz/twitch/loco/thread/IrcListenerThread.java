@@ -5,6 +5,7 @@ import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.util.ChatUtil;
+import com.pgjbz.twitch.loco.util.IrcUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -50,7 +51,7 @@ public class IrcListenerThread implements Runnable {
                     }
                     else
                         for (LocoIrcEventsListener eventsListener : eventIrcListeners)
-                            eventsListener.listenEvent(line);
+                            eventsListener.listenEvent(IrcUtil.extractEvent(line));
                 }
                 if(keepConnected)
                     tryReconnect(RECONNECTION_ATTEMPTS);
