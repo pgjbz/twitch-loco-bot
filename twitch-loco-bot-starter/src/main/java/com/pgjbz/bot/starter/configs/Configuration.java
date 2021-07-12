@@ -1,5 +1,7 @@
 package com.pgjbz.bot.starter.configs;
 
+import com.pgjbz.bot.starter.factory.AbstractBotRepositoryFactory;
+import com.pgjbz.bot.starter.model.Bot;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -7,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -20,10 +23,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class Configuration {
 
    private static Map<String, String> configs;
+   @Getter
+   private static List<Bot> bots;
 
    public static void setEnvironment(String[] args) {
        String configFile = Stream.of(args).findFirst().orElse("");
        System.setProperty(CONFIG_FILE_SYSTEM_PROPERTY, configFile);
+       bots = AbstractBotRepositoryFactory.getInstance().createBotRepository().findAll();
    }
 
    @SneakyThrows

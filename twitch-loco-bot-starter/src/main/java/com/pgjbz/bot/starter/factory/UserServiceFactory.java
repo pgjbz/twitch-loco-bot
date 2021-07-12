@@ -2,7 +2,7 @@ package com.pgjbz.bot.starter.factory;
 
 import com.pgjbz.bot.starter.repository.TwitchUserRepository;
 import com.pgjbz.bot.starter.service.UserService;
-import com.pgjbz.bot.starter.service.UserServiceImpl;
+import com.pgjbz.bot.starter.service.impl.UserServiceImpl;
 
 public class UserServiceFactory extends AbstractUserServiceFactory {
 

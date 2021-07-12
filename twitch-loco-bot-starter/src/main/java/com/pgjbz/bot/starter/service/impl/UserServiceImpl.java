@@ -1,7 +1,8 @@
-package com.pgjbz.bot.starter.service;
+package com.pgjbz.bot.starter.service.impl;
 
 import com.pgjbz.bot.starter.model.TwitchUser;
 import com.pgjbz.bot.starter.repository.TwitchUserRepository;
+import com.pgjbz.bot.starter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 

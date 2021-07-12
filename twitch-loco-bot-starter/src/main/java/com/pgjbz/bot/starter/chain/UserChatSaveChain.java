@@ -1,5 +1,6 @@
 package com.pgjbz.bot.starter.chain;
 
+import com.pgjbz.bot.starter.util.BotUtils;
 import com.pgjbz.bot.starter.service.UserService;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,11 @@ public class UserChatSaveChain extends AbstractChatSaveChain {
 
     @Override
     public void doChatSave(ChatMessage chatMessage) {
-
         String username = chatMessage.getUser();
+        if(BotUtils.isBot(username)) {
+            log.info("Message from bot {}... skipping", username);
+            return;
+        }
         log.info("Perform user validation for user {}", username);
         try {
             userService.saveIfNotExists(username);

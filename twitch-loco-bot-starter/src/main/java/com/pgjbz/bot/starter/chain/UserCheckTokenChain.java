@@ -1,5 +1,6 @@
 package com.pgjbz.bot.starter.chain;
 
+import com.pgjbz.bot.starter.util.BotUtils;
 import com.pgjbz.bot.starter.model.Token;
 import com.pgjbz.bot.starter.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,11 @@ public class UserCheckTokenChain extends AbstractTokenChain{
     @Override
     public void doAddUnits(Token token) {
         String username = token.getPk().getUsername();
+        if(BotUtils.isBot(username)) {
+            log.info("Message from bot {}... skipping", username);
+            return;
+        }
+
         log.info("Perform user validation for user {}", username);
         try {
             userService.saveIfNotExists(username);
