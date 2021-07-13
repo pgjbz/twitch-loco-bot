@@ -1,17 +1,12 @@
 package com.pgjbz.bot.starter;
 
 import com.pgjbz.bot.starter.chain.*;
-import com.pgjbz.bot.starter.configs.BotConstants;
 import com.pgjbz.bot.starter.configs.Configuration;
-import com.pgjbz.bot.starter.factory.AbstractMessageRepositoryFactory;
-import com.pgjbz.bot.starter.factory.AbstractTokenRepositoryFactory;
-import com.pgjbz.bot.starter.factory.AbstractTwitchLocoFactory;
-import com.pgjbz.bot.starter.factory.AbstractUserServiceFactory;
+import com.pgjbz.bot.starter.factory.*;
 import com.pgjbz.bot.starter.listener.JoinChatListener;
 import com.pgjbz.bot.starter.listener.SaveChatListener;
 import com.pgjbz.bot.starter.listener.TokenStreamListener;
-import com.pgjbz.bot.starter.listener.UserJoinListener;
-import com.pgjbz.bot.starter.thread.UserJoinThread;
+import com.pgjbz.bot.starter.listener.IrcEventSaveListener;
 import com.pgjbz.twitch.loco.enums.CommandReceive;
 import com.pgjbz.twitch.loco.enums.CommandSend;
 import com.pgjbz.twitch.loco.listener.LocoChatListener;
@@ -26,9 +21,6 @@ import com.pgjbz.twitch.loco.service.impl.StreamInfoServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Objects.nonNull;
@@ -45,11 +37,11 @@ public class Application {
         log.info("Starting bot...");
 
         Configuration.setEnvironment(args);
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
         var messageRepository = AbstractMessageRepositoryFactory.getInstance().createMessageRepository();
         var tokenRepository = AbstractTokenRepositoryFactory.getInstance().createTokenRepository();
         var userService = AbstractUserServiceFactory.getInstance().createUserService();
+        var ircEventRepository = AbstractIrcRepositoryFactory.getIsntance().createIrcEventRepository();
         AbstractChatSaveChain userChatSaveChain = new UserChatSaveChain(userService);
         AbstractChatSaveChain messageChatSaveChain = new MessageSaveChain(messageRepository);
         userChatSaveChain.addNext(messageChatSaveChain);
@@ -72,24 +64,22 @@ public class Application {
         LocoIrcEventsListener defaultIrcEventsListener = new StandardLocoIrcEventsListener();
         LocoIrcEventsListener joinChannelListener = new JoinChatListener(connection);
 
+        AbstractIrcEventSaveChain checkUserIrc = new IrcEventUserCheckChain(userService);
+        AbstractIrcEventSaveChain eventSaveChain = new IrcEventSaveChain(ircEventRepository);
+        checkUserIrc.addNext(eventSaveChain);
+
         connection.addChatListener(defaultChatListener);
         connection.addChatListener(chatSaveListener);
 
-        UserJoinThread userJoinThread = new UserJoinThread(connection);
-        executorService.scheduleAtFixedRate(userJoinThread, 1, BotConstants.MESSAGE_INTERVAL, TimeUnit.SECONDS);
-
-        connection.addIrcEventListener(new UserJoinListener(userJoinThread));
+        connection.addIrcEventListener(new IrcEventSaveListener(checkUserIrc));
         connection.addIrcEventListener(defaultIrcEventsListener);
-//        connection.addIrcEventListener(joinChannelListener);
+        connection.addIrcEventListener(joinChannelListener);
         connection.addIrcEventListener(event -> {
             if(nonNull(event) && event.getCommandReceive() == CommandReceive.PING)
                 connection.sendCommand(CommandSend.PONG);
         });
 
         AtomicReference<Long> messageSend = new AtomicReference<>(System.currentTimeMillis());
-
-
-        //Queue to usernotice
 
         connection.addIrcEventListener(event -> {
             try {
