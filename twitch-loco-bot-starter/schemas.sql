@@ -26,7 +26,10 @@ create table if not exists bots (
 insert
 	into
 	bots(bot_name)
-values('nihghtbot'),
+values('streamlabs'),
 ('moobot'),
 ('streamelements'),
+('nightbot'),
+('streamholics'),
+('discord_for_streamers'),
 ('bot97loco');

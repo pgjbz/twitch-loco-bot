@@ -11,7 +11,6 @@ public class ChatUtil {
 
     public static ChatMessage extractFields(String messageReceive) {
         try {
-            log.info(messageReceive);
             messageReceive = messageReceive.substring(messageReceive.indexOf(" :") + 2);
             String message = messageReceive.substring(messageReceive.indexOf(" :") + 2);
             String channel = messageReceive.substring(messageReceive.indexOf("#") + 1, messageReceive.indexOf(" :"));
