@@ -3,10 +3,7 @@ package com.pgjbz.bot.starter;
 import com.pgjbz.bot.starter.chain.*;
 import com.pgjbz.bot.starter.configs.Configuration;
 import com.pgjbz.bot.starter.factory.*;
-import com.pgjbz.bot.starter.listener.JoinChatListener;
-import com.pgjbz.bot.starter.listener.SaveChatListener;
-import com.pgjbz.bot.starter.listener.TokenStreamListener;
-import com.pgjbz.bot.starter.listener.IrcEventSaveListener;
+import com.pgjbz.bot.starter.listener.*;
 import com.pgjbz.twitch.loco.enums.CommandReceive;
 import com.pgjbz.twitch.loco.enums.CommandSend;
 import com.pgjbz.twitch.loco.listener.LocoChatListener;
@@ -38,10 +35,10 @@ public class Application {
 
         Configuration.setEnvironment(args);
 
-        var messageRepository = AbstractMessageRepositoryFactory.getInstance().createMessageRepository();
-        var tokenRepository = AbstractTokenRepositoryFactory.getInstance().createTokenRepository();
+        var messageRepository = AbstractRepositoryFactory.getInstance().createMessageRepository();
+        var tokenRepository = AbstractRepositoryFactory.getInstance().createTokenRepository();
         var userService = AbstractUserServiceFactory.getInstance().createUserService();
-        var ircEventRepository = AbstractIrcRepositoryFactory.getIsntance().createIrcEventRepository();
+        var ircEventRepository = AbstractRepositoryFactory.getInstance().createIrcEventRepository();
         AbstractChatSaveChain userChatSaveChain = new UserChatSaveChain(userService);
         AbstractChatSaveChain messageChatSaveChain = new MessageSaveChain(messageRepository);
         userChatSaveChain.addNext(messageChatSaveChain);
@@ -70,10 +67,11 @@ public class Application {
 
         connection.addChatListener(defaultChatListener);
         connection.addChatListener(chatSaveListener);
+        connection.addChatListener(new CommandChatListener(connection));
 
         connection.addIrcEventListener(new IrcEventSaveListener(checkUserIrc));
         connection.addIrcEventListener(defaultIrcEventsListener);
-        connection.addIrcEventListener(joinChannelListener);
+//        connection.addIrcEventListener(joinChannelListener);
         connection.addIrcEventListener(event -> {
             if(nonNull(event) && event.getCommandReceive() == CommandReceive.PING)
                 connection.sendCommand(CommandSend.PONG);

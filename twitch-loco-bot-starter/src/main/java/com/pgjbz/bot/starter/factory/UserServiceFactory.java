@@ -8,7 +8,7 @@ public class UserServiceFactory extends AbstractUserServiceFactory {
 
     @Override
     public UserService createUserService() {
-        TwitchUserRepository twitchUserRepository = AbstractTwitchUserRepositoryFactory.getInstance().createTwitchUserRepository();
+        TwitchUserRepository twitchUserRepository = AbstractRepositoryFactory.getInstance().createTwitchUserRepository();
         return new UserServiceImpl(twitchUserRepository);
     }
 

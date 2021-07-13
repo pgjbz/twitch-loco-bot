@@ -1,6 +1,6 @@
 package com.pgjbz.bot.starter.configs;
 
-import com.pgjbz.bot.starter.factory.AbstractBotRepositoryFactory;
+import com.pgjbz.bot.starter.factory.AbstractRepositoryFactory;
 import com.pgjbz.bot.starter.model.Bot;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -29,7 +29,7 @@ public class Configuration {
    public static void setEnvironment(String[] args) {
        String configFile = Stream.of(args).findFirst().orElse("");
        System.setProperty(CONFIG_FILE_SYSTEM_PROPERTY, configFile);
-       bots = AbstractBotRepositoryFactory.getInstance().createBotRepository().findAll();
+       bots = AbstractRepositoryFactory.getInstance().createBotRepository().findAll();
    }
 
    @SneakyThrows

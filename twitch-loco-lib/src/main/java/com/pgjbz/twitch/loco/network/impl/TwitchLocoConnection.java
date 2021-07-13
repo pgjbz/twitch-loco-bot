@@ -17,6 +17,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -66,7 +67,16 @@ public class TwitchLocoConnection extends TwitchConnection {
     public void sendMessage(@NonNull String message) {
         if(isBlank(message))
             throw new TwitchLocoCommandParamException("Message cannot be empty");
-        sendCommand(MESSAGE, this.twitchLoco.getChannel(),  message);
+        try {
+            Date now = new Date();
+            if (now.getTime() > (lastMessageSend.getTime() + 30_000L)) {
+                sendCommand(MESSAGE, this.twitchLoco.getChannel(), message);
+                lastMessageSend = now;
+            } else
+                log.info("Message cannot be send");
+        } catch (Exception e) {
+            log.error("Error on send message to irc: {}", e.getMessage(), e);
+        }
     }
 
     @Override

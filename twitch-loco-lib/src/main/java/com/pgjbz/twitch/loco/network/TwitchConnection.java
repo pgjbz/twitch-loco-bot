@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Date;
 
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_PORT;
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_URL;
@@ -30,6 +31,7 @@ public abstract class TwitchConnection {
     public abstract void joinChannel(String channel);
     public abstract void startThread();
     public abstract void close();
+    public static Date lastMessageSend = new Date(System.currentTimeMillis() - 30_000L);
 
     public static TwitchLocoConnection getConnection(TwitchLoco twitchLoco){
         var socket = createSocket();

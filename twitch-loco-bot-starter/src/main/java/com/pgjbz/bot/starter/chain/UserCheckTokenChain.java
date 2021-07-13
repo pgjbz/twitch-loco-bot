@@ -18,7 +18,7 @@ public class UserCheckTokenChain extends AbstractTokenChain{
     public void doAddUnits(Token token) {
         String username = token.getPk().getUsername();
         if(BotUtils.isBot(username)) {
-            log.info("Message from bot {}... skipping", username);
+            log.info("User is bot {}... skipping", username);
             return;
         }
 
