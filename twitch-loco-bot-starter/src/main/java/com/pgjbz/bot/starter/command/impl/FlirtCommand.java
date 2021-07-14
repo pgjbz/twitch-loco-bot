@@ -12,8 +12,6 @@ import lombok.extern.log4j.Log4j2;
 import java.util.List;
 import java.util.Random;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 @Log4j2
 @RequiredArgsConstructor
 public class FlirtCommand implements StandardCommand {
@@ -27,9 +25,7 @@ public class FlirtCommand implements StandardCommand {
         List<Flirt> flirts = flirtRepository.findAll();
         if(!flirts.isEmpty()) {
             String teaser = flirts.get(random.nextInt(flirts.size())).getTeaser();
-            String target = BotUtils.extractTarget(chatMessage.getMessage());
-            twitchConnection.sendMessage(teaser
-                    .replace("${target}", isBlank(target) ? chatMessage.getUser() : target));
+            twitchConnection.sendMessage(BotUtils.formatCommand(teaser, chatMessage));
         } else
             twitchConnection.sendMessage("Teasers is empty");
     }

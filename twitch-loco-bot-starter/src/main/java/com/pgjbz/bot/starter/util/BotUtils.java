@@ -1,10 +1,13 @@
 package com.pgjbz.bot.starter.util;
 
 import com.pgjbz.bot.starter.configs.Configuration;
+import com.pgjbz.twitch.loco.model.ChatMessage;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class BotUtils {
 
@@ -20,6 +23,13 @@ public class BotUtils {
         if(matcher.find())
             return matcher.group();
         return Strings.EMPTY;
+    }
+
+    public static String formatCommand(String command, ChatMessage chatMessage) {
+        String touser = chatMessage.getUser();
+        String target = extractTarget(chatMessage.getMessage());
+        return command.replace("${touser}", touser)
+                .replace("${target}", isBlank(target) ? touser : target);
     }
 
 }

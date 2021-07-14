@@ -12,8 +12,6 @@ import lombok.extern.log4j.Log4j2;
 import java.util.List;
 import java.util.Random;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 @Log4j2
 @RequiredArgsConstructor
 public class StealCommand implements StandardCommand {
@@ -27,10 +25,7 @@ public class StealCommand implements StandardCommand {
         List<Steal> steals = stealRepository.findAll();
         if(!steals.isEmpty()) {
             String steal = steals.get(random.nextInt(steals.size())).getSteal();
-            String touser = chatMessage.getUser();
-            String target = BotUtils.extractTarget(chatMessage.getMessage());
-            twitchConnection.sendMessage(steal.replace("${touser}", touser)
-                    .replace("${target}", isBlank(target) ? touser : target));
+            twitchConnection.sendMessage(BotUtils.formatCommand(steal, chatMessage));
         } else
             twitchConnection.sendMessage("Empty steals");
     }
