@@ -21,11 +21,27 @@ public class Token {
     }
 
     public void increaseTokenUnit() {
+        addTokenUnit(BotConstants.TOKEN_UNIT_ADD);
+    }
+
+    public void addTokenUnit(long value) {
+        if(value < 0)
+            return;
         if(isNull(unit)) {
-            unit = BotConstants.TOKEN_UNIT_ADD;
+            unit = value;
             return;
         }
-        unit += BotConstants.TOKEN_UNIT_ADD;
+        unit += value;
+    }
+
+    public void removeTokenUnit(long value) {
+        if(value < 0)
+            return;
+        if(isNull(unit)) {
+            unit = -value;
+            return;
+        }
+        unit -= value;
     }
 
 }
