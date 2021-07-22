@@ -28,7 +28,7 @@ public class CommandChatListener implements LocoChatListener {
     private static Command extractCommand(ChatMessage chatMessage){
         try {
             String message = chatMessage.getMessage();
-            Pattern pattern = Pattern.compile("(?<=^!)(\\w+)");
+            Pattern pattern = Pattern.compile("(?<=^!)([A-Za-z]+)(?!\\S)");
             Matcher matcher = pattern.matcher(message);
             if(matcher.find()) {
                 return Command.valueOf(matcher.group().toUpperCase());
