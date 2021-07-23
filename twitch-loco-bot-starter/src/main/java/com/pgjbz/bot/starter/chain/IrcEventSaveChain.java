@@ -15,11 +15,11 @@ public class IrcEventSaveChain extends AbstractIrcEventSaveChain{
 
     @Override
     public void doSaveIrcEvent(IrcEvent ircEvent) {
-        log.info("Performing irc event save");
+        log.info("Performing irc event save - {}", ircEvent.toString());
         try {
             ircEventRepository.insert(ircEvent);
         } catch (Exception e) {
-            log.error("Error on save irc event: {}", e.getMessage(), e);
+            log.error("Error on save irc event - {}: {}", ircEvent.toString(), e.getMessage(), e);
             return;
         }
         if(nonNull(nextStep))

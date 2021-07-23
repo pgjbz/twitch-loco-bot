@@ -6,6 +6,7 @@ import com.pgjbz.twitch.loco.listener.LocoChatListener;
 import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.impl.TwitchLocoConnection;
+import lombok.Setter;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Date;
+import java.util.List;
 
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_PORT;
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_IRC_URL;
@@ -22,6 +24,10 @@ import static com.pgjbz.twitch.loco.enums.CommandSend.NICK;
 import static com.pgjbz.twitch.loco.enums.CommandSend.PASS;
 
 public abstract class TwitchConnection {
+
+    @Setter
+    protected Long messageInterval = 30_000L;
+    protected Date lastMessageSend;
 
     public abstract void sendMessage(String message);
     public abstract void sendCommand(CommandSend commandSend, String ...targets);
@@ -31,20 +37,28 @@ public abstract class TwitchConnection {
     public abstract void joinChannel(String channel);
     public abstract void startThread();
     public abstract void close();
-    public static Date lastMessageSend = new Date(System.currentTimeMillis() - 30_000L);
+    public abstract String getBotName();
+    public abstract List<String> getModsList();
+    public abstract void addMod(String username);
+    public abstract void sendModListCommand();
+    public abstract boolean canSendMessage(Date now, boolean isCommand);
 
     public static TwitchLocoConnection getConnection(TwitchLoco twitchLoco){
         var socket = createSocket();
         var bufferedWriter = createBufferedWriter(socket);
         var inputStream = createInputStreamReader(socket);
         var twitchLocoConnection = new TwitchLocoConnection(socket, inputStream, bufferedWriter, twitchLoco);
+        executeBaseConfigs(twitchLoco, twitchLocoConnection);
+        return twitchLocoConnection;
+    }
+
+    private static void executeBaseConfigs(TwitchLoco twitchLoco, TwitchLocoConnection twitchLocoConnection) {
         twitchLocoConnection.sendCommand(PASS, twitchLoco.getOauth());
         twitchLocoConnection.sendCommand(NICK, twitchLoco.getUsername());
-        twitchLocoConnection.joinChannel(twitchLoco.getChannel());
         twitchLocoConnection.sendCommand(CommandSend.CAP_COMMANDS);
         twitchLocoConnection.sendCommand(CommandSend.CAP_MEMBERSHIP);
         twitchLocoConnection.sendCommand(CommandSend.CAP_TAG);
-        return twitchLocoConnection;
+        twitchLocoConnection.joinChannel(twitchLoco.getChannel());
     }
 
     private static Socket createSocket() {
@@ -73,4 +87,5 @@ public abstract class TwitchConnection {
             throw new TwitchLocoConnectionException(e.getMessage(), e.getCause());
         }
     }
+
 }

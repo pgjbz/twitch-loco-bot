@@ -7,6 +7,7 @@ import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,6 +18,10 @@ public class CommandsCommand implements StandardCommand {
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
         log.info("Receive commands command {}", chatMessage.toString());
+        if(!twitchConnection.canSendMessage(new Date(System.currentTimeMillis()), false)) {
+            log.info("Cannot perform command [commands] now");
+            return;
+        }
         String commands = Stream.of(Command.values())
                 .map(command -> "!" + command.name().toLowerCase())
                 .collect(Collectors.joining(", "));

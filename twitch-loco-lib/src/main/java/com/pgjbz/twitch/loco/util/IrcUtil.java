@@ -46,6 +46,7 @@ public class IrcUtil {
             switch (commandReceive) {
                 case PING:
                 case UNKNOWN:
+                case NOTICE:
                     ircEvent = new IrcEvent(commandReceive, extractUsername(ircEventFullString, commandReceive), extractChannel(ircEventFullString));
                     ircEvent.setUnknownString(ircEventFullString);
                     break;

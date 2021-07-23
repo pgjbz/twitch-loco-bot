@@ -12,7 +12,8 @@ public enum CommandReceive {
     CLEARCHAT("(?<=:)([\\w]+)(?!.)"),
     PING("@@"),
     PONG("@@"),
-    USERSTATE("(?<=display-name=)([\\w]+)");
+    USERSTATE("(?<=display-name=)([\\w]+)"),
+    NOTICE("@@");
 
     private final String extractUsernameExpression;
 

@@ -8,6 +8,8 @@ import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Date;
+
 @Log4j2
 @RequiredArgsConstructor
 public class TokensCommand implements StandardCommand {
@@ -17,6 +19,10 @@ public class TokensCommand implements StandardCommand {
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
         log.info("Receive tokens command {}", chatMessage.toString());
+        if(!twitchConnection.canSendMessage(new Date(System.currentTimeMillis()), false)) {
+            log.info("Cannot perform command [tokens] now");
+            return;
+        }
         try {
             tokenRepository.findByPk(new TokenPk(chatMessage.getUser(), chatMessage.getChannel())).ifPresentOrElse(
                 token ->

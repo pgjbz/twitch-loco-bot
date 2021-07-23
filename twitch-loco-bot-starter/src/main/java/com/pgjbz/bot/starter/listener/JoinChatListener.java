@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static java.util.Objects.nonNull;
 
 @Log4j2
@@ -14,6 +17,7 @@ import static java.util.Objects.nonNull;
 public class JoinChatListener implements LocoIrcEventsListener {
 
     private final TwitchConnection twitchConnection;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     public void listenEvent(IrcEvent event) {

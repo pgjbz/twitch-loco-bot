@@ -52,6 +52,7 @@ public class TokenStreamListener implements BotStreamInfoEventListener {
         viewers.addAll(chatters.getGlobalMods());
         viewers.addAll(chatters.getVips());
         viewers.addAll(chatters.getStaff());
+        viewers.addAll(chatters.getBroadcaster());
         return viewers;
     }
 

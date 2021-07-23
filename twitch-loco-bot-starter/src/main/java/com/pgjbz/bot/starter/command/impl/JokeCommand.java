@@ -8,6 +8,7 @@ import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -20,6 +21,10 @@ public class JokeCommand implements StandardCommand {
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
         log.info("Receive joke command {}", chatMessage.toString());
+        if(!twitchConnection.canSendMessage(new Date(System.currentTimeMillis()), false)) {
+            log.info("Cannot perform command [joke] now");
+            return;
+        }
         final Random random = new Random();
         List<Joke> jokes = jokeRepository.findAll();
         if(!jokes.isEmpty())

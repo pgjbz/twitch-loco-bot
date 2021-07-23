@@ -7,6 +7,8 @@ import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,12 +19,15 @@ import static java.util.Objects.nonNull;
 public class CommandChatListener implements LocoChatListener {
 
     private final TwitchConnection twitchConnection;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     public void listenChat(ChatMessage message) {
-        Command command = extractCommand(message);
-        if(nonNull(command))
-            command.getStandardCommand().executeCommand(message, twitchConnection);
+        executorService.submit(() -> {
+            Command command = extractCommand(message);
+            if(nonNull(command))
+                command.getStandardCommand().executeCommand(message, twitchConnection);
+        });
     }
 
     private static Command extractCommand(ChatMessage chatMessage){

@@ -9,6 +9,7 @@ import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Date;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +26,10 @@ public class DiceCommand implements StandardCommand {
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
         log.info("Receive dice command {}", chatMessage.toString());
+        if(!twitchConnection.canSendMessage(new Date(System.currentTimeMillis()), false)) {
+            log.info("Cannot perform command [dice] now");
+            return;
+        }
         final String username = chatMessage.getUser();
         int[] bet = extractBet(chatMessage.getMessage());
         if(!chatMessage.getMessage().matches("!dice\\s\\d+\\s\\d+")
@@ -37,7 +42,7 @@ public class DiceCommand implements StandardCommand {
             executeTokenWon(token, username, bet, twitchConnection)
         , () -> twitchConnection.sendMessage(String.format("%s you don't have tokens", username)));
     }
-    
+
     private int[] extractBet(String message) {
         int[] values = new int[] {0, 0};
         final Pattern pattern = Pattern.compile("(?<=\\s)(\\d+)");

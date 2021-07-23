@@ -4,7 +4,7 @@ drop table if exists irc_event;
 drop table if exists users;
 drop table if exists bots;
 drop table if exists jokes;
-drop table if exists teasers;
+drop table if exists flirts;
 drop table if exists steals;
 
 

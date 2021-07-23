@@ -17,6 +17,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,8 +26,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.pgjbz.twitch.loco.enums.CommandSend.*;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Log4j2
 public class TwitchLocoConnection extends TwitchConnection {
@@ -37,10 +41,23 @@ public class TwitchLocoConnection extends TwitchConnection {
 
     private final List<LocoChatListener> chatListeners = new CopyOnWriteArrayList<>();
     private final List<LocoIrcEventsListener> eventIrcListeners = new CopyOnWriteArrayList<>();
+    private List<String> modList;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private IrcListenerThread ircListenerThread;
+
+
+    @Override
+    public boolean canSendMessage(Date now, boolean isCommand) {
+        return isNull(lastMessageSend) || now.getTime() > (lastMessageSend.getTime() + messageInterval) || isCommand;
+    }
+
+    @Override
+    public void sendModListCommand() {
+        log.info("Sending mod update command");
+        sendMessage("/mods");
+    }
 
     public TwitchLocoConnection(
             @NonNull Socket socket,
@@ -68,10 +85,12 @@ public class TwitchLocoConnection extends TwitchConnection {
         if(isBlank(message))
             throw new TwitchLocoCommandParamException("Message cannot be empty");
         try {
-            Date now = new Date();
-            if (now.getTime() > (lastMessageSend.getTime() + 30_000L)) {
+            Date now = new Date(System.currentTimeMillis());
+            boolean isCommand = message.startsWith("/");
+            if (canSendMessage(now, isCommand)) {
                 sendCommand(MESSAGE, this.twitchLoco.getChannel(), message);
-                lastMessageSend = now;
+                if(!isCommand)
+                    lastMessageSend = now;
             } else
                 log.info("Message cannot be send");
         } catch (Exception e) {
@@ -117,7 +136,23 @@ public class TwitchLocoConnection extends TwitchConnection {
     }
 
     @Override
-    @SneakyThrows
+    public String getBotName() {
+        return twitchLoco.getUsername();
+    }
+
+    @Override
+    public List<String> getModsList() {
+        return Collections.unmodifiableList(modList);
+    }
+
+    @Override
+    public void addMod(String username) {
+        if(isNull(modList)) modList = new ArrayList<>();
+        if(isNotBlank(username))
+            modList.add(username);
+    }
+
+    @Override
     public void joinChannel(String channel) {
         if(isBlank(channel)) {
             log.info("Empty channel on join channel");
@@ -127,10 +162,17 @@ public class TwitchLocoConnection extends TwitchConnection {
         log.info("Join channel");
         twitchLoco.setChannel(channel);
         sendCommand(JOIN, channel);
+        lastMessageSend = null;
+        clearModList();
+        sendModListCommand();
+    }
+
+    private void clearModList() {
+        if(nonNull(modList))
+            modList.clear();
     }
 
     @Override
-    @SneakyThrows
     public void close() {
         leaveChannel(twitchLoco.getChannel());
         this.ircListenerThread.setKeepConnected(false);

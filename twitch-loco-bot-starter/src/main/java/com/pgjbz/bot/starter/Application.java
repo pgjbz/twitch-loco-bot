@@ -1,16 +1,10 @@
 package com.pgjbz.bot.starter;
 
-import com.pgjbz.bot.starter.chain.*;
 import com.pgjbz.bot.starter.configs.Configuration;
 import com.pgjbz.bot.starter.factory.*;
-import com.pgjbz.bot.starter.listener.*;
 import com.pgjbz.twitch.loco.enums.CommandReceive;
 import com.pgjbz.twitch.loco.enums.CommandSend;
-import com.pgjbz.twitch.loco.listener.LocoChatListener;
-import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
-import com.pgjbz.twitch.loco.listener.standards.StandardBotStreamInfoEventListener;
-import com.pgjbz.twitch.loco.listener.standards.StandardLocoChatListener;
-import com.pgjbz.twitch.loco.listener.standards.StandardLocoIrcEventsListener;
+import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.network.impl.TwitchLocoConnection;
 import com.pgjbz.twitch.loco.schedule.BotStreamInfoEventSchedule;
@@ -18,7 +12,7 @@ import com.pgjbz.twitch.loco.service.impl.StreamInfoServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Scanner;
 
 import static java.util.Objects.nonNull;
 
@@ -35,67 +29,37 @@ public class Application {
 
         Configuration.setEnvironment(args);
 
-        var messageRepository = AbstractRepositoryFactory.getInstance().createMessageRepository();
-        var tokenRepository = AbstractRepositoryFactory.getInstance().createTokenRepository();
-        var userService = AbstractUserServiceFactory.getInstance().createUserService();
-        var ircEventRepository = AbstractRepositoryFactory.getInstance().createIrcEventRepository();
-        AbstractChatSaveChain userChatSaveChain = new UserChatSaveChain(userService);
-        AbstractChatSaveChain messageChatSaveChain = new MessageSaveChain(messageRepository);
-        userChatSaveChain.addNext(messageChatSaveChain);
-        LocoChatListener chatSaveListener = new SaveChatListener(userChatSaveChain);
-
-        AbstractTokenChain userCheckTokenChain = new UserCheckTokenChain(userService);
-        AbstractTokenChain createUnitTokenChain = new CreateUnitTokenChain(tokenRepository);
-        AbstractTokenChain addUnitTokenChain = new AddUnitTokenChain(tokenRepository);
-
-        userCheckTokenChain
-                .addNext(createUnitTokenChain)
-                .addNext(addUnitTokenChain);
-
-        var twitchLoco = AbstractTwitchLocoFactory.getInstance().createTwitchLoco();
+        TwitchLoco twitchLoco = AbstractTwitchLocoFactory.getInstance().createTwitchLoco();
         TwitchLocoConnection connection = TwitchConnection.getConnection(twitchLoco);
 
         connection.startThread();
 
-        LocoChatListener defaultChatListener = new StandardLocoChatListener();
-        LocoIrcEventsListener defaultIrcEventsListener = new StandardLocoIrcEventsListener();
-        LocoIrcEventsListener joinChannelListener = new JoinChatListener(connection);
+        connection.addChatListener(AbstractChatListenerFactory.getInstance().createChatSaveLister());
+        connection.addChatListener(AbstractChatListenerFactory.getInstance().createCommandChatListener(connection));
 
-        AbstractIrcEventSaveChain checkUserIrc = new IrcEventUserCheckChain(userService);
-        AbstractIrcEventSaveChain eventSaveChain = new IrcEventSaveChain(ircEventRepository);
-        checkUserIrc.addNext(eventSaveChain);
+        connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createIrcEventSaveListener());
+        connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createNoticeIrcEventListener(connection));
+        connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createUserNoticeIrcEventListener(connection));
 
-        connection.addChatListener(defaultChatListener);
-        connection.addChatListener(chatSaveListener);
-        connection.addChatListener(new CommandChatListener(connection));
-
-        connection.addIrcEventListener(new IrcEventSaveListener(checkUserIrc));
-        connection.addIrcEventListener(defaultIrcEventsListener);
-//        connection.addIrcEventListener(joinChannelListener);
         connection.addIrcEventListener(event -> {
             if(nonNull(event) && event.getCommandReceive() == CommandReceive.PING)
                 connection.sendCommand(CommandSend.PONG);
         });
 
-        AtomicReference<Long> messageSend = new AtomicReference<>(System.currentTimeMillis());
-
-        connection.addIrcEventListener(event -> {
-            try {
-                if (nonNull(event) && event.getCommandReceive() == CommandReceive.USERNOTICE && (messageSend.get() + 30000) <= System.currentTimeMillis()) {
-                    connection.sendMessage(event.getUsername() + " to só fazendo um teste!");
-                    messageSend.set(System.currentTimeMillis());
-                }
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        });
-
-        //CAPs, not cap tags because is bad
-
         BotStreamInfoEventSchedule botStreamInfoEventSchedule = new BotStreamInfoEventSchedule(new StreamInfoServiceImpl(), twitchLoco);
-        botStreamInfoEventSchedule.addBotStreamInfoEventListener(new StandardBotStreamInfoEventListener());
-        botStreamInfoEventSchedule.addBotStreamInfoEventListener(new TokenStreamListener(userCheckTokenChain));
+        botStreamInfoEventSchedule.addBotStreamInfoEventListener(
+                AbstractBotStreamInfoFactory.getInstance().createBotStreamTokenEventListener()
+        );
         botStreamInfoEventSchedule.startSchedule(5L);
+
+        try(Scanner sc = new Scanner(System.in)) {
+            String channelToJoin;
+            while(!(channelToJoin = sc.next().strip()).isBlank())
+                connection.joinChannel(channelToJoin);
+        }
+        connection.close();
+        log.info("Exit bot");
+        System.exit(0);
 
     }
 

@@ -5,6 +5,8 @@ import com.pgjbz.bot.starter.repository.impl.*;
 
 public class RepositoryFactory extends AbstractRepositoryFactory{
 
+    RepositoryFactory(){}
+
     @Override
     public JokeRepository createJokeRepository() {
         return new JokeRepositoryImpl(AbstractJdbcTemplateFactory.getInstance().createJdbcTemplate());

@@ -7,6 +7,8 @@ import static com.pgjbz.bot.starter.configs.Configuration.getConfigs;
 
 public class TwitchLocoFactory extends AbstractTwitchLocoFactory {
 
+    TwitchLocoFactory(){}
+
     @Override
     public TwitchLoco createTwitchLoco() {
         String configFile = System.getProperty(CONFIG_FILE_SYSTEM_PROPERTY);

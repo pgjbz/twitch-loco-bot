@@ -5,6 +5,8 @@ import com.pgjbz.bot.starter.database.jdbc.impl.JdbcTemplateImpl;
 
 public class JdbcTemplateFactory extends AbstractJdbcTemplateFactory{
 
+    JdbcTemplateFactory(){}
+
     @Override
     public JdbcTemplate createJdbcTemplate() {
         return new JdbcTemplateImpl();
