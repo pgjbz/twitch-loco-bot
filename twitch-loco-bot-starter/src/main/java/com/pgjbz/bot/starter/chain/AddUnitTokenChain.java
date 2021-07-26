@@ -2,7 +2,7 @@ package com.pgjbz.bot.starter.chain;
 
 
 import com.pgjbz.bot.starter.model.Token;
-import com.pgjbz.bot.starter.repository.TokenRepository;
+import com.pgjbz.bot.starter.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -13,15 +13,15 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class AddUnitTokenChain extends AbstractTokenChain{
 
-    private final TokenRepository tokenRepository;
+    private final TokenService tokenService;
 
     @Override
     public void doAddUnits(Token token) {
         String username = token.getPk().getUsername();
-        log.info("Add {} token units for user {}", TOKEN_UNIT_ADD, username);
+        log.info("Add {} token units for user {} on channel {}", TOKEN_UNIT_ADD, username, token.getPk().getChannel());
         try {
             token.increaseTokenUnit();
-            tokenRepository.update(token);
+            tokenService.update(token);
         } catch (Exception e) {
             log.error("Error on add token unit from user {} in channel {}", token.getPk().getUsername(), token.getPk().getChannel());
             return;

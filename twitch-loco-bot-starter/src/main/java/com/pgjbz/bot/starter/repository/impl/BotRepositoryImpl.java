@@ -41,7 +41,7 @@ public class BotRepositoryImpl implements BotRepository {
         try {
             bots = jdbcTemplate.query(sql.toString(), rowMapper);
         } catch (EmptyResultException e) {
-            log.info("No results founded for messages");
+            log.info("No results founded for bots");
         }
         return bots;
     }

@@ -2,16 +2,16 @@ package com.pgjbz.bot.starter.command.enums;
 
 import com.pgjbz.bot.starter.command.StandardCommand;
 import com.pgjbz.bot.starter.command.impl.*;
-import com.pgjbz.bot.starter.factory.AbstractRepositoryFactory;
+import com.pgjbz.bot.starter.factory.AbstractServiceFactory;
 import lombok.Getter;
 
 @Getter
 public enum Command {
-    TOKENS(new TokensCommand(AbstractRepositoryFactory.getInstance().createTokenRepository())),
-    DICE(new DiceCommand(AbstractRepositoryFactory.getInstance().createTokenRepository())),
-    JOKE(new JokeCommand(AbstractRepositoryFactory.getInstance().createJokeRepository())),
-    FLIRT(new FlirtCommand(AbstractRepositoryFactory.getInstance().createTeaserRepository())),
-    STEAL(new StealCommand(AbstractRepositoryFactory.getInstance().createStealRepository())),
+    TOKENS(new TokensCommand(AbstractServiceFactory.getInstance().createTokenService())),
+    DICE(new DiceCommand(AbstractServiceFactory.getInstance().createTokenService())),
+    JOKE(new JokeCommand(AbstractServiceFactory.getInstance().createJokeService())),
+    FLIRT(new FlirtCommand(AbstractServiceFactory.getInstance().createFlirtService())),
+    STEAL(new StealCommand(AbstractServiceFactory.getInstance().createStealService())),
     COMMANDS(new CommandsCommand()),
     BOT(new BotCommand());
 

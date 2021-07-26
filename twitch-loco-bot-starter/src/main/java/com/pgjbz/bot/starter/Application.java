@@ -27,7 +27,7 @@ public class Application {
 
         log.info("Starting bot...");
 
-        Configuration.setEnvironment(args);
+        Configuration.configEnvironment(args);
 
         TwitchLoco twitchLoco = AbstractTwitchLocoFactory.getInstance().createTwitchLoco();
         TwitchLocoConnection connection = TwitchConnection.getConnection(twitchLoco);

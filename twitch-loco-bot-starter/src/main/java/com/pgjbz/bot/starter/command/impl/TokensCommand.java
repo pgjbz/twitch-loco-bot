@@ -2,7 +2,7 @@ package com.pgjbz.bot.starter.command.impl;
 
 import com.pgjbz.bot.starter.command.StandardCommand;
 import com.pgjbz.bot.starter.model.pk.TokenPk;
-import com.pgjbz.bot.starter.repository.TokenRepository;
+import com.pgjbz.bot.starter.service.TokenService;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class TokensCommand implements StandardCommand {
 
-    private final TokenRepository tokenRepository;
+    private final TokenService tokenService;
 
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
@@ -24,7 +24,7 @@ public class TokensCommand implements StandardCommand {
             return;
         }
         try {
-            tokenRepository.findByPk(new TokenPk(chatMessage.getUser(), chatMessage.getChannel())).ifPresentOrElse(
+            tokenService.findByPk(new TokenPk(chatMessage.getUser(), chatMessage.getChannel())).ifPresentOrElse(
                 token ->
                     twitchConnection.sendMessage(String.format("@%s you have %s tokens", chatMessage.getUser(), token.getUnit()))
                 , () -> twitchConnection.sendMessage(String.format("%s you no have tokens", chatMessage.getUser()))

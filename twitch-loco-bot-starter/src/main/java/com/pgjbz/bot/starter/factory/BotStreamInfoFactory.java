@@ -5,7 +5,7 @@ import com.pgjbz.bot.starter.chain.AddUnitTokenChain;
 import com.pgjbz.bot.starter.chain.CreateUnitTokenChain;
 import com.pgjbz.bot.starter.chain.UserCheckTokenChain;
 import com.pgjbz.bot.starter.listener.TokenStreamListener;
-import com.pgjbz.bot.starter.repository.TokenRepository;
+import com.pgjbz.bot.starter.service.TokenService;
 import com.pgjbz.bot.starter.service.UserService;
 import com.pgjbz.twitch.loco.listener.BotStreamInfoEventListener;
 
@@ -16,11 +16,11 @@ public class BotStreamInfoFactory extends AbstractBotStreamInfoFactory {
     @Override
     public BotStreamInfoEventListener createBotStreamTokenEventListener() {
 
-        UserService userService = AbstractUserServiceFactory.getInstance().createUserService();
-        TokenRepository tokenRepository = AbstractRepositoryFactory.getInstance().createTokenRepository();
+        UserService userService = AbstractServiceFactory.getInstance().createUserService();
+        TokenService tokenService = AbstractServiceFactory.getInstance().createTokenService();
         AbstractTokenChain userCheckTokenChain = new UserCheckTokenChain(userService);
-        AbstractTokenChain createUnitTokenChain = new CreateUnitTokenChain(tokenRepository);
-        AbstractTokenChain addUnitTokenChain = new AddUnitTokenChain(tokenRepository);
+        AbstractTokenChain createUnitTokenChain = new CreateUnitTokenChain(tokenService);
+        AbstractTokenChain addUnitTokenChain = new AddUnitTokenChain(tokenService);
 
         userCheckTokenChain
                 .addNext(createUnitTokenChain)

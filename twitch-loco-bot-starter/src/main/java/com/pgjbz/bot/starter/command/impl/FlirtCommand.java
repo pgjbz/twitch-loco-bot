@@ -2,7 +2,7 @@ package com.pgjbz.bot.starter.command.impl;
 
 import com.pgjbz.bot.starter.command.StandardCommand;
 import com.pgjbz.bot.starter.model.Flirt;
-import com.pgjbz.bot.starter.repository.FlirtRepository;
+import com.pgjbz.bot.starter.service.FlirtService;
 import com.pgjbz.bot.starter.util.BotUtils;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
@@ -17,7 +17,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class FlirtCommand implements StandardCommand {
 
-    private final FlirtRepository flirtRepository;
+    private final FlirtService flirtService;
 
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
@@ -27,11 +27,11 @@ public class FlirtCommand implements StandardCommand {
             return;
         }
         final Random random = new Random();
-        List<Flirt> flirts = flirtRepository.findAll();
+        List<Flirt> flirts = flirtService.findAll();
         if(!flirts.isEmpty()) {
             String teaser = flirts.get(random.nextInt(flirts.size())).getTeaser();
             twitchConnection.sendMessage(BotUtils.formatCommand(teaser, chatMessage));
         } else
-            twitchConnection.sendMessage("Teasers is empty");
+            twitchConnection.sendMessage("Flirts is empty");
     }
 }

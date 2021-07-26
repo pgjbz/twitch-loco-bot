@@ -5,7 +5,7 @@ import com.pgjbz.bot.starter.chain.MessageSaveChain;
 import com.pgjbz.bot.starter.chain.UserChatSaveChain;
 import com.pgjbz.bot.starter.listener.CommandChatListener;
 import com.pgjbz.bot.starter.listener.SaveChatListener;
-import com.pgjbz.bot.starter.repository.MessageRepository;
+import com.pgjbz.bot.starter.service.MessageService;
 import com.pgjbz.bot.starter.service.UserService;
 import com.pgjbz.twitch.loco.listener.LocoChatListener;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
@@ -21,10 +21,10 @@ public class ChatListenerFactory extends AbstractChatListenerFactory {
 
     @Override
     public LocoChatListener createChatSaveLister() {
-        UserService userService = AbstractUserServiceFactory.getInstance().createUserService();
-        MessageRepository messageRepository = AbstractRepositoryFactory.getInstance().createMessageRepository();
+        MessageService messageService = AbstractServiceFactory.getInstance().createMessageService();
+        UserService userService = AbstractServiceFactory.getInstance().createUserService();
         AbstractChatSaveChain userChatSaveChain = new UserChatSaveChain(userService);
-        AbstractChatSaveChain messageChatSaveChain = new MessageSaveChain(messageRepository);
+        AbstractChatSaveChain messageChatSaveChain = new MessageSaveChain(messageService);
         userChatSaveChain.addNext(messageChatSaveChain);
         return new SaveChatListener(userChatSaveChain);
     }

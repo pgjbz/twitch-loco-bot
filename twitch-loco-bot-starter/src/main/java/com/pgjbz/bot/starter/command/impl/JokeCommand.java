@@ -2,7 +2,7 @@ package com.pgjbz.bot.starter.command.impl;
 
 import com.pgjbz.bot.starter.command.StandardCommand;
 import com.pgjbz.bot.starter.model.Joke;
-import com.pgjbz.bot.starter.repository.JokeRepository;
+import com.pgjbz.bot.starter.service.JokeService;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class JokeCommand implements StandardCommand {
 
-    private final JokeRepository jokeRepository;
+    private final JokeService jokeService;
 
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
@@ -26,7 +26,7 @@ public class JokeCommand implements StandardCommand {
             return;
         }
         final Random random = new Random();
-        List<Joke> jokes = jokeRepository.findAll();
+        List<Joke> jokes = jokeService.findAll();
         if(!jokes.isEmpty())
             twitchConnection.sendMessage(jokes.get(random.nextInt(jokes.size())).getJoke());
         else

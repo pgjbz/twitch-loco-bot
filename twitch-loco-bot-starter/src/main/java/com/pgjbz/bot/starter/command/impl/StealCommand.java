@@ -2,7 +2,7 @@ package com.pgjbz.bot.starter.command.impl;
 
 import com.pgjbz.bot.starter.command.StandardCommand;
 import com.pgjbz.bot.starter.model.Steal;
-import com.pgjbz.bot.starter.repository.StealRepository;
+import com.pgjbz.bot.starter.service.StealService;
 import com.pgjbz.bot.starter.util.BotUtils;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
@@ -17,7 +17,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class StealCommand implements StandardCommand {
 
-    private final StealRepository stealRepository;
+    private final StealService stealService;
 
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
@@ -27,7 +27,7 @@ public class StealCommand implements StandardCommand {
             return;
         }
         final Random random = new Random();
-        List<Steal> steals = stealRepository.findAll();
+        List<Steal> steals = stealService.findAll();
         if(!steals.isEmpty()) {
             String steal = steals.get(random.nextInt(steals.size())).getSteal();
             twitchConnection.sendMessage(BotUtils.formatCommand(steal, chatMessage));

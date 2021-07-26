@@ -18,7 +18,7 @@ public class RepositoryFactory extends AbstractRepositoryFactory{
     }
 
     @Override
-    public FlirtRepository createTeaserRepository() {
+    public FlirtRepository createFlirtRepository() {
         return new FlirtRepositoryImpl(AbstractJdbcTemplateFactory.getInstance().createJdbcTemplate());
     }
 

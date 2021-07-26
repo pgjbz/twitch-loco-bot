@@ -1,7 +1,7 @@
 package com.pgjbz.bot.starter.chain;
 
 import com.pgjbz.bot.starter.model.Message;
-import com.pgjbz.bot.starter.repository.MessageRepository;
+import com.pgjbz.bot.starter.service.MessageService;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -12,7 +12,7 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class MessageSaveChain extends AbstractChatSaveChain {
 
-    private final MessageRepository messageRepository;
+    private final MessageService messageService;
 
     @Override
     public void doChatSave(ChatMessage chatMessage) {
@@ -21,7 +21,7 @@ public class MessageSaveChain extends AbstractChatSaveChain {
 
         try {
             Message message = new Message(chatMessage);
-            messageRepository.insert(message);
+            messageService.insert(message);
         } catch (Exception e) {
             log.error("Error on save message {}", chatMessage.toString(), e);
             return;

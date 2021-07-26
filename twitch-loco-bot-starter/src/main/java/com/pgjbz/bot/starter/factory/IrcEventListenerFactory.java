@@ -6,7 +6,7 @@ import com.pgjbz.bot.starter.chain.IrcEventUserCheckChain;
 import com.pgjbz.bot.starter.listener.IrcEventSaveListener;
 import com.pgjbz.bot.starter.listener.NoticeIrcEventListener;
 import com.pgjbz.bot.starter.listener.UserNoticeIrcEventListener;
-import com.pgjbz.bot.starter.repository.IrcEventRepository;
+import com.pgjbz.bot.starter.service.IrcEventService;
 import com.pgjbz.bot.starter.service.UserService;
 import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
@@ -18,10 +18,10 @@ public class IrcEventListenerFactory extends AbstractIrcEventListenerFactory {
 
     @Override
     public LocoIrcEventsListener createIrcEventSaveListener() {
-        UserService userService = AbstractUserServiceFactory.getInstance().createUserService();
-        IrcEventRepository ircEventRepository = AbstractRepositoryFactory.getInstance().createIrcEventRepository();
+        IrcEventService ircEventService = AbstractServiceFactory.getInstance().createIrcEventService();
+        UserService userService = AbstractServiceFactory.getInstance().createUserService();
         AbstractIrcEventSaveChain checkUserIrc = new IrcEventUserCheckChain(userService);
-        AbstractIrcEventSaveChain eventSaveChain = new IrcEventSaveChain(ircEventRepository);
+        AbstractIrcEventSaveChain eventSaveChain = new IrcEventSaveChain(ircEventService);
         checkUserIrc.addNext(eventSaveChain);
         return new IrcEventSaveListener(checkUserIrc);
     }

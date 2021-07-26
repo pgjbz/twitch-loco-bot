@@ -3,7 +3,7 @@ package com.pgjbz.bot.starter.command.impl;
 import com.pgjbz.bot.starter.command.StandardCommand;
 import com.pgjbz.bot.starter.model.Token;
 import com.pgjbz.bot.starter.model.pk.TokenPk;
-import com.pgjbz.bot.starter.repository.TokenRepository;
+import com.pgjbz.bot.starter.service.TokenService;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class DiceCommand implements StandardCommand {
 
-    private final TokenRepository tokenRepository;
+    private final TokenService tokenService;
     private final int DICE_NUMBER_POS = 0;
     private final int BET_AMOUNT_POS = 1;
     private final int DICE_FACES = 6;
@@ -38,7 +38,7 @@ public class DiceCommand implements StandardCommand {
             twitchConnection.sendMessage(String.format("@%s please use !dice dice_number[1-6] bet_amount", username));
             return;
         }
-        tokenRepository.findByPk(new TokenPk(username, chatMessage.getChannel())).ifPresentOrElse(token ->
+        tokenService.findByPk(new TokenPk(username, chatMessage.getChannel())).ifPresentOrElse(token ->
             executeTokenWon(token, username, bet, twitchConnection)
         , () -> twitchConnection.sendMessage(String.format("%s you don't have tokens", username)));
     }
@@ -65,11 +65,11 @@ public class DiceCommand implements StandardCommand {
         if(rollNumber == bet[DICE_NUMBER_POS]) {
             int winAmount = betAmount * 5;
             token.addTokenUnit(winAmount);
-            tokenRepository.update(token);
+            tokenService.update(token);
             twitchConnection.sendMessage(String.format("@%s you roll %s and won %s tokens", username, rollNumber, winAmount));
         } else {
             token.removeTokenUnit(betAmount);
-            tokenRepository.update(token);
+            tokenService.update(token);
             twitchConnection.sendMessage(String.format("@%s you roll %s and lost %s tokens", username, rollNumber, betAmount));
         }
     }
