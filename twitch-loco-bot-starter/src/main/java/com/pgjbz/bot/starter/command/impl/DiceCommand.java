@@ -61,6 +61,7 @@ public class DiceCommand implements StandardCommand {
             twitchConnection.sendMessage(String.format("@%s you don't have enough tokens, you have %s tokens",
                     username,
                     token.getUnit()));
+            return;
         }
         if(rollNumber == bet[DICE_NUMBER_POS]) {
             int winAmount = betAmount * 5;
