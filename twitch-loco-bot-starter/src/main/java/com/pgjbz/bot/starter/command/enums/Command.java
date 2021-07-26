@@ -12,7 +12,8 @@ public enum Command {
     JOKE(new JokeCommand(AbstractRepositoryFactory.getInstance().createJokeRepository())),
     FLIRT(new FlirtCommand(AbstractRepositoryFactory.getInstance().createTeaserRepository())),
     STEAL(new StealCommand(AbstractRepositoryFactory.getInstance().createStealRepository())),
-    COMMANDS(new CommandsCommand());
+    COMMANDS(new CommandsCommand()),
+    BOT(new BotCommand());
 
     private final StandardCommand standardCommand;
 
