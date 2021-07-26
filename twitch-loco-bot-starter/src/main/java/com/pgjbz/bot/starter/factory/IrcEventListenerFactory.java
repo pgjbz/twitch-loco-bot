@@ -5,6 +5,7 @@ import com.pgjbz.bot.starter.chain.IrcEventSaveChain;
 import com.pgjbz.bot.starter.chain.IrcEventUserCheckChain;
 import com.pgjbz.bot.starter.listener.IrcEventSaveListener;
 import com.pgjbz.bot.starter.listener.NoticeIrcEventListener;
+import com.pgjbz.bot.starter.listener.PingIrcEventListener;
 import com.pgjbz.bot.starter.listener.UserNoticeIrcEventListener;
 import com.pgjbz.bot.starter.service.IrcEventService;
 import com.pgjbz.bot.starter.service.UserService;
@@ -39,5 +40,10 @@ public class IrcEventListenerFactory extends AbstractIrcEventListenerFactory {
     @Override
     public LocoIrcEventsListener createUserNoticeIrcEventListener(@NonNull TwitchConnection twitchConnection) {
         return new UserNoticeIrcEventListener(twitchConnection);
+    }
+
+    @Override
+    public LocoIrcEventsListener createPongIrcEventListener(@NonNull TwitchConnection twitchConnection) {
+        return new PingIrcEventListener(twitchConnection);
     }
 }

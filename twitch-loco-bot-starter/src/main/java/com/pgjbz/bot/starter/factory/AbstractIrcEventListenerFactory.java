@@ -20,5 +20,6 @@ public abstract class AbstractIrcEventListenerFactory {
     public abstract LocoIrcEventsListener createJoinChatListener(@NonNull TwitchConnection twitchConnection);
     public abstract LocoIrcEventsListener createNoticeIrcEventListener(@NonNull TwitchConnection twitchConnection);
     public abstract LocoIrcEventsListener createUserNoticeIrcEventListener(@NonNull TwitchConnection twitchConnection);
+    public abstract LocoIrcEventsListener createPongIrcEventListener(@NonNull TwitchConnection twitchConnection);
 
 }

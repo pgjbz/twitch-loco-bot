@@ -1,9 +1,10 @@
 package com.pgjbz.bot.starter;
 
 import com.pgjbz.bot.starter.configs.Configuration;
-import com.pgjbz.bot.starter.factory.*;
-import com.pgjbz.twitch.loco.enums.CommandReceive;
-import com.pgjbz.twitch.loco.enums.CommandSend;
+import com.pgjbz.bot.starter.factory.AbstractBotStreamInfoFactory;
+import com.pgjbz.bot.starter.factory.AbstractChatListenerFactory;
+import com.pgjbz.bot.starter.factory.AbstractIrcEventListenerFactory;
+import com.pgjbz.bot.starter.factory.AbstractTwitchLocoFactory;
 import com.pgjbz.twitch.loco.model.TwitchLoco;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import com.pgjbz.twitch.loco.network.impl.TwitchLocoConnection;
@@ -13,8 +14,6 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Scanner;
-
-import static java.util.Objects.nonNull;
 
 @Log4j2
 public class Application {
@@ -36,15 +35,10 @@ public class Application {
 
         connection.addChatListener(AbstractChatListenerFactory.getInstance().createChatSaveLister());
         connection.addChatListener(AbstractChatListenerFactory.getInstance().createCommandChatListener(connection));
-
         connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createIrcEventSaveListener());
         connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createNoticeIrcEventListener(connection));
         connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createUserNoticeIrcEventListener(connection));
-
-        connection.addIrcEventListener(event -> {
-            if(nonNull(event) && event.getCommandReceive() == CommandReceive.PING)
-                connection.sendCommand(CommandSend.PONG);
-        });
+        connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createPongIrcEventListener(connection));
 
         BotStreamInfoEventSchedule botStreamInfoEventSchedule = new BotStreamInfoEventSchedule(new StreamInfoServiceImpl(), twitchLoco);
         botStreamInfoEventSchedule.addBotStreamInfoEventListener(
