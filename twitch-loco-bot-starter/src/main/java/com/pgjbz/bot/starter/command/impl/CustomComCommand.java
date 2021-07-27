@@ -34,7 +34,7 @@ public class CustomComCommand implements StandardCommand {
             return;
         }
 
-        final String command = extractCustomCommand(message);
+        final String command = extractCustomCommand(message).toLowerCase();
         final String commandMessage = extractCommandMessage(message).replace("!"+command+" ", "");
         final Map<String, Integer> flags = extractFlags(message);
         final boolean onlyMods = flags.containsKey("-m=") && (flags.get("-m=") != 0);

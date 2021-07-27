@@ -2,6 +2,7 @@ package com.pgjbz.bot.starter.command.impl;
 
 import com.pgjbz.bot.starter.command.StandardCommand;
 import com.pgjbz.bot.starter.command.enums.Command;
+import com.pgjbz.bot.starter.service.CustomCommandService;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import com.pgjbz.twitch.loco.network.TwitchConnection;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class CommandsCommand implements StandardCommand {
 
+    private final CustomCommandService customCommandService;
+
     @Override
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
         log.info("Receive commands command {}", chatMessage.toString());
@@ -24,9 +27,13 @@ public class CommandsCommand implements StandardCommand {
         }
         String commands = Stream.of(Command.values())
                 .map(command -> "!" + command.name().toLowerCase())
-                .collect(Collectors.joining(", "));
-        twitchConnection.sendMessage("Command list: " + commands
-                .replaceAll("[\\u005b-\\u005d]", ""));
+                .collect(Collectors.joining(", "))
+                .replaceAll("[\\u005b-\\u005d]", "") ////remove []
+        + ", " + customCommandService.findByChannel(chatMessage.getChannel())
+                .stream().map(customCommand -> "!"+customCommand.getCommand())
+                .collect(Collectors.joining(", "))
+                .replaceAll("[\\u005b-\\u005d]", ""); ////remove []
+        twitchConnection.sendMessage(commands);
     }
 
 }

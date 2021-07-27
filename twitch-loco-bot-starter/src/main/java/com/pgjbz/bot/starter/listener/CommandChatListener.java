@@ -38,7 +38,7 @@ public class CommandChatListener implements LocoChatListener {
 
     private void executeCustomCommand(ChatMessage chatMessage) {
         customCommandService.findByChannelAndCommand(chatMessage.getChannel(),
-                BotUtils.extractCommandFromMessage(chatMessage))
+                BotUtils.extractCommandFromMessage(chatMessage).toLowerCase())
                 .ifPresent(customCommand -> {
                     if(customCommand.getOnlyMods() && !twitchConnection.getModsList().contains(chatMessage.getUser())) return;
                     if(nonNull(customCommand.getTokenCost()) && customCommand.getTokenCost() > 0) {

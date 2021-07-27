@@ -58,4 +58,14 @@ public class CustomCommandServiceImpl implements CustomCommandService {
         }
         return false;
     }
+
+    @Override
+    public List<CustomCommand> findByChannel(String channel) {
+        try {
+            return customCommandRepository.findByChannel(channel);
+        } catch (Exception e) {
+            log.error("Error on find command by channel {}", channel, e);
+        }
+        return new ArrayList<>();
+    }
 }

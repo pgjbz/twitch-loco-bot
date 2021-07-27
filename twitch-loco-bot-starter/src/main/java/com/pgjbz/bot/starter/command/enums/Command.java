@@ -12,7 +12,7 @@ public enum Command {
     JOKE(new JokeCommand(AbstractServiceFactory.getInstance().createJokeService())),
     FLIRT(new FlirtCommand(AbstractServiceFactory.getInstance().createFlirtService())),
     STEAL(new StealCommand(AbstractServiceFactory.getInstance().createStealService())),
-    COMMANDS(new CommandsCommand()),
+    COMMANDS(new CommandsCommand(AbstractServiceFactory.getInstance().createCustomCommandService())),
     BOT(new BotCommand()),
     CUSTOMCOM(new CustomComCommand(AbstractServiceFactory.getInstance().createCustomCommandService()));
 
