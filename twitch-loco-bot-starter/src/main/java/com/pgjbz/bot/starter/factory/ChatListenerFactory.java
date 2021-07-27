@@ -16,7 +16,9 @@ public class ChatListenerFactory extends AbstractChatListenerFactory {
 
     @Override
     public LocoChatListener createCommandChatListener(TwitchConnection twitchConnection) {
-        return new CommandChatListener(twitchConnection);
+        return new CommandChatListener(twitchConnection,
+                AbstractServiceFactory.getInstance().createCustomCommandService(),
+                AbstractServiceFactory.getInstance().createTokenService());
     }
 
     @Override

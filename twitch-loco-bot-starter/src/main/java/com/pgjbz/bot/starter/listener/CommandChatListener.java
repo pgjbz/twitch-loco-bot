@@ -1,6 +1,10 @@
 package com.pgjbz.bot.starter.listener;
 
 import com.pgjbz.bot.starter.command.enums.Command;
+import com.pgjbz.bot.starter.model.Token;
+import com.pgjbz.bot.starter.model.pk.TokenPk;
+import com.pgjbz.bot.starter.service.CustomCommandService;
+import com.pgjbz.bot.starter.service.TokenService;
 import com.pgjbz.bot.starter.util.BotUtils;
 import com.pgjbz.twitch.loco.listener.LocoChatListener;
 import com.pgjbz.twitch.loco.model.ChatMessage;
@@ -9,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,15 +24,56 @@ import static java.util.Objects.nonNull;
 public class CommandChatListener implements LocoChatListener {
 
     private final TwitchConnection twitchConnection;
+    private final CustomCommandService customCommandService;
+    private final TokenService tokenService;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     public void listenChat(ChatMessage message) {
         executorService.submit(() -> {
-            Command command = extractCommand(message);
-            if(nonNull(command))
-                command.getStandardCommand().executeCommand(message, twitchConnection);
+            executeStandardCommand(message, extractCommand(message));
+            executeCustomCommand(message);
         });
+    }
+
+    private void executeCustomCommand(ChatMessage chatMessage) {
+        customCommandService.findByChannelAndCommand(chatMessage.getChannel(),
+                BotUtils.extractCommandFromMessage(chatMessage))
+                .ifPresent(customCommand -> {
+                    if(customCommand.getOnlyMods() && !twitchConnection.getModsList().contains(chatMessage.getUser())) return;
+                    if(nonNull(customCommand.getTokenCost()) && customCommand.getTokenCost() > 0) {
+                        log.info("Command cost {} validating if user {} on channel {} have enough tokens",
+                                customCommand.getTokenCost(),
+                                chatMessage.getUser(),
+                                chatMessage.getChannel());
+                        Optional<Token> optionalToken = tokenService.findByPk(new TokenPk(chatMessage.getUser(), chatMessage.getChannel()));
+                        if(optionalToken.isEmpty()
+                            || customCommand.getTokenCost() > optionalToken.get().getUnit()) {
+                            log.info("User {} on channel {} don't have enough tokens to perform command {}",
+                                    chatMessage.getUser(),
+                                    chatMessage.getChannel(),
+                                    customCommand.getCommand());
+                            twitchConnection.sendMessage(String.format("@%s you don't have enough points to use this command", chatMessage.getUser()));
+                            return;
+                        }
+                        log.info("Perform payment to use command {} for user {} on channel {}",
+                                customCommand.getCommand(),
+                                chatMessage.getMessage(),
+                                chatMessage.getChannel());
+                        Token token = optionalToken.get();
+                        token.removeTokenUnit(customCommand.getTokenCost());
+                        tokenService.update(token);
+                    }
+                    customCommand.incrementUseCount();
+                    String message = BotUtils.formatCommand(chatMessage, customCommand);
+                    twitchConnection.sendMessage(message);
+                    customCommandService.update(customCommand);
+                });
+    }
+
+    private void executeStandardCommand(ChatMessage message, Command command) {
+        if(nonNull(command))
+            command.getStandardCommand().executeCommand(message, twitchConnection);
     }
 
     private static Command extractCommand(ChatMessage chatMessage){

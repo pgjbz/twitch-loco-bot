@@ -1,6 +1,7 @@
 package com.pgjbz.bot.starter.util;
 
 import com.pgjbz.bot.starter.configs.Configuration;
+import com.pgjbz.bot.starter.model.CustomCommand;
 import com.pgjbz.twitch.loco.model.ChatMessage;
 import org.apache.logging.log4j.util.Strings;
 
@@ -30,6 +31,11 @@ public class BotUtils {
         String target = extractTarget(chatMessage.getMessage());
         return command.replace("${touser}", touser)
                 .replace("${target}", isBlank(target) ? touser : target);
+    }
+
+    public static String formatCommand(ChatMessage chatMessage, CustomCommand customCommand) {
+        String baseFormat = formatCommand(customCommand.getCommandMessage(), chatMessage);
+        return baseFormat.replace("${count}", String.valueOf(customCommand.getUseCount()));
     }
 
     public static String extractCommandFromMessage(ChatMessage chatMessage) {
