@@ -23,6 +23,11 @@ public class RepositoryFactory extends AbstractRepositoryFactory{
     }
 
     @Override
+    public CustomCommandRepository createCustomCommandRepository() {
+        return new CustomCommandRepositoryImpl(AbstractJdbcTemplateFactory.getInstance().createJdbcTemplate());
+    }
+
+    @Override
     public MessageRepository createMessageRepository() {
         return new MessageRepositoryImpl(AbstractJdbcTemplateFactory.getInstance().createJdbcTemplate());
     }

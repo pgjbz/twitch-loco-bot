@@ -54,6 +54,11 @@ public class TwitchLocoConnection extends TwitchConnection {
     }
 
     @Override
+    public String getChannel() {
+        return twitchLoco.getChannel();
+    }
+
+    @Override
     public void sendModListCommand() {
         log.info("Sending mod update command");
         sendMessage("/mods");

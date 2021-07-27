@@ -13,7 +13,8 @@ public enum Command {
     FLIRT(new FlirtCommand(AbstractServiceFactory.getInstance().createFlirtService())),
     STEAL(new StealCommand(AbstractServiceFactory.getInstance().createStealService())),
     COMMANDS(new CommandsCommand()),
-    BOT(new BotCommand());
+    BOT(new BotCommand()),
+    CUSTOMCOM(new CustomComCustomCommand(AbstractServiceFactory.getInstance().createCustomCommandService()));
 
     private final StandardCommand standardCommand;
 

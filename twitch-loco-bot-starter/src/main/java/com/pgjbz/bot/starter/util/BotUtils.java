@@ -32,4 +32,13 @@ public class BotUtils {
                 .replace("${target}", isBlank(target) ? touser : target);
     }
 
+    public static String extractCommandFromMessage(ChatMessage chatMessage) {
+        String message = chatMessage.getMessage();
+        Pattern pattern = Pattern.compile("(?<=^!)([A-Za-z]+)(?!\\S)");
+        Matcher matcher = pattern.matcher(message);
+        if(matcher.find())
+            return matcher.group();
+        return Strings.EMPTY;
+    }
+
 }

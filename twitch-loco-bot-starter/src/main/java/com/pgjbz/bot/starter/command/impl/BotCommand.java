@@ -17,7 +17,7 @@ public class BotCommand implements StandardCommand {
     public void executeCommand(ChatMessage chatMessage, TwitchConnection twitchConnection) {
         log.info("Receive commands command {}", chatMessage.toString());
         if(!twitchConnection.canSendMessage(new Date(System.currentTimeMillis()), false)) {
-            log.info("Cannot perform command [commands] now");
+            log.info("Cannot perform command [bot] now");
             return;
         }
         twitchConnection.sendMessage(String.format("Bot repository: %s bot creator: %s", BOT_REPOSITORY, BOT_CREATOR));

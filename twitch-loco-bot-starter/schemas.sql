@@ -120,3 +120,16 @@ values ('@${target} não sou carro, mas sou Para ti.'),
 ('@${target} eu não sou manteiga de cacau, Mas adoraria amaciar seus lábios'),
 ('@${target} nome e Arnaldo mais pode me chamar de Naldo, pois quando eu te vi perdi o ar'),
 ('@${target} você é tão linda(o) que não caga, lança bombom');
+
+create table if not exists custom_commands (
+	id bigserial primary key,
+	created_at timestamp,
+	updated_at timestamp,
+	use_count bigint,
+	only_mods boolean,
+	command_message text not null,
+	channel text not null,
+	created_by text not null,
+	command text not null,
+	token_cost bigint
+);

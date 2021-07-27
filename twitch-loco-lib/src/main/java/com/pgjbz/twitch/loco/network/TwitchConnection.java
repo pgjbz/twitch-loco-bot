@@ -42,6 +42,7 @@ public abstract class TwitchConnection {
     public abstract void addMod(String username);
     public abstract void sendModListCommand();
     public abstract boolean canSendMessage(Date now, boolean isCommand);
+    public abstract String getChannel();
 
     public static TwitchLocoConnection getConnection(TwitchLoco twitchLoco){
         var socket = createSocket();

@@ -22,4 +22,5 @@ public abstract class AbstractServiceFactory {
     public abstract IrcEventService createIrcEventService();
     public abstract StealService createStealService();
     public abstract TokenService createTokenService();
+    public abstract CustomCommandService createCustomCommandService();
 }

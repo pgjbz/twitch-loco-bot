@@ -39,6 +39,12 @@ public class ServiceFactory extends AbstractServiceFactory {
     }
 
     @Override
+    public CustomCommandService createCustomCommandService() {
+        CustomCommandRepository customCommandRepository = AbstractRepositoryFactory.getInstance().createCustomCommandRepository();
+        return new CustomCommandServiceImpl(customCommandRepository);
+    }
+
+    @Override
     public IrcEventService createIrcEventService() {
         IrcEventRepository ircEventRepository = AbstractRepositoryFactory.getInstance().createIrcEventRepository();
         return new IrcEventServiceImpl(ircEventRepository);

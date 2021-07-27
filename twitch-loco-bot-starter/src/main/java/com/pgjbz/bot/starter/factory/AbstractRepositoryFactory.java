@@ -16,6 +16,7 @@ public abstract class AbstractRepositoryFactory {
     public abstract JokeRepository createJokeRepository();
     public abstract StealRepository createStealRepository();
     public abstract FlirtRepository createFlirtRepository();
+    public abstract CustomCommandRepository createCustomCommandRepository();
 
     public static AbstractRepositoryFactory getInstance() {
         if(isNull(instance))
