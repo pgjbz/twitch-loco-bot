@@ -10,4 +10,5 @@ public interface CustomCommandService extends Service<CustomCommand, Long> {
     Optional<CustomCommand> findByChannelAndCommand(String channel, String command);
     boolean update(CustomCommand customCommand);
     List<CustomCommand> findByChannel(String channel);
+    boolean delete(CustomCommand customCommand);
 }

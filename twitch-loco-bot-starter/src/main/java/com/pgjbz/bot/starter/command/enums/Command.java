@@ -14,7 +14,8 @@ public enum Command {
     STEAL(new StealCommand(AbstractServiceFactory.getInstance().createStealService())),
     COMMANDS(new CommandsCommand(AbstractServiceFactory.getInstance().createCustomCommandService())),
     BOT(new BotCommand()),
-    CUSTOMCOM(new CustomComCommand(AbstractServiceFactory.getInstance().createCustomCommandService()));
+    CUSTOMCOM(new CustomComCommand(AbstractServiceFactory.getInstance().createCustomCommandService())),
+    DELCUSTOMCOM(new DelCustomComCommand(AbstractServiceFactory.getInstance().createCustomCommandService()));
 
     private final StandardCommand standardCommand;
 

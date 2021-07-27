@@ -68,4 +68,14 @@ public class CustomCommandServiceImpl implements CustomCommandService {
         }
         return new ArrayList<>();
     }
+
+    @Override
+    public boolean delete(CustomCommand customCommand) {
+        try {
+            return customCommandRepository.delete(customCommand);
+        } catch (Exception e){
+            log.error("Error on delete command {}", customCommand.getCommand());
+        }
+        return false;
+    }
 }
