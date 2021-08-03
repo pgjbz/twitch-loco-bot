@@ -48,7 +48,7 @@ public class Application {
 
         try(Scanner sc = new Scanner(System.in)) {
             String channelToJoin;
-            while(!(channelToJoin = sc.next().strip()).isBlank())
+            while(!(channelToJoin = sc.next().strip()).equalsIgnoreCase(".quit"))
                 connection.joinChannel(channelToJoin);
         }
         connection.close();

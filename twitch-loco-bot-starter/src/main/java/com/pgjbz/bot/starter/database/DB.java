@@ -1,16 +1,15 @@
 package com.pgjbz.bot.starter.database;
 
 import com.pgjbz.bot.starter.configs.Configuration;
-import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Map;
-import java.util.logging.Level;
 
 import static com.pgjbz.bot.starter.configs.BotConstants.CONFIG_FILE_SYSTEM_PROPERTY;
 
-@Log
+@Log4j2
 public class DB {
 
     public static Connection getConnection() {
@@ -25,7 +24,7 @@ public class DB {
             String url  = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
             connection = DriverManager.getConnection(url, username, password);
         } catch (Exception e){
-            log.log(Level.SEVERE, "Error on connect: " + e.getMessage(), e);
+            log.error("Error on connect: {}", e.getMessage(), e);
         }
         return connection;
     }
