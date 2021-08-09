@@ -39,6 +39,12 @@ public class ServiceFactory extends AbstractServiceFactory {
     }
 
     @Override
+    public RankingService createRankingService() {
+        RankingRepository rankingRepository = AbstractRepositoryFactory.getInstance().createRankingRepository();
+        return new RankingServiceImpl(rankingRepository);
+    }
+
+    @Override
     public CustomCommandService createCustomCommandService() {
         CustomCommandRepository customCommandRepository = AbstractRepositoryFactory.getInstance().createCustomCommandRepository();
         return new CustomCommandServiceImpl(customCommandRepository);

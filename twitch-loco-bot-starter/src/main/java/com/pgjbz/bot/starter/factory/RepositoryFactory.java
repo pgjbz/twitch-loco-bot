@@ -23,6 +23,11 @@ public class RepositoryFactory extends AbstractRepositoryFactory{
     }
 
     @Override
+    public RankingRepository createRankingRepository() {
+        return new RankingRepositoryImpl(AbstractJdbcTemplateFactory.getInstance().createJdbcTemplate());
+    }
+
+    @Override
     public CustomCommandRepository createCustomCommandRepository() {
         return new CustomCommandRepositoryImpl(AbstractJdbcTemplateFactory.getInstance().createJdbcTemplate());
     }
