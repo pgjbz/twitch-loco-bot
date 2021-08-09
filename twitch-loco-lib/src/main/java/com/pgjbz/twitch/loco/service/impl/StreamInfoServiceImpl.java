@@ -1,16 +1,13 @@
 package com.pgjbz.twitch.loco.service.impl;
 
+import com.pgjbz.twitch.loco.enums.HttpMethod;
 import com.pgjbz.twitch.loco.model.StreamInfo;
 import com.pgjbz.twitch.loco.service.StreamInfoService;
 import com.pgjbz.twitch.loco.util.DeserializeJsonUtil;
+import com.pgjbz.twitch.loco.util.HttpUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.util.Strings;
 
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.Optional;
 
 import static com.pgjbz.twitch.loco.constant.TwitchConstants.TWITCH_CHATTERS_URL;
@@ -34,27 +31,13 @@ public class StreamInfoServiceImpl implements StreamInfoService {
     }
 
     private String performHttpRequest(String channel) {
-
-        log.info("Preparing http request");
-
-        String httpBodyResponse = Strings.EMPTY;
-        HttpClient httpClient= HttpClient.newBuilder()
-                .proxy(ProxySelector.getDefault())
-                .version(HttpClient.Version.HTTP_2)
-                .build();
-
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(TWITCH_CHATTERS_URL.replace("${channel}", channel)))
-                .build();
         try {
-            log.info("Performing http request");
-            HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            httpBodyResponse = httpResponse.body();
+            log.info("Performing http request to get chatters for channel {}", channel);
+            return HttpUtil.execute(HttpMethod.GET, TWITCH_CHATTERS_URL.replace("${channel}", channel));
         } catch (Exception e) {
-            log.error("Error on send http request", e);
+            log.error("Error on performing http request to get chatters for channel {}", channel, e);
         }
-        return httpBodyResponse;
+        return Strings.EMPTY;
     }
 
 }
