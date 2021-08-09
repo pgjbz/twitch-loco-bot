@@ -104,7 +104,7 @@ public class CustomComCommand implements StandardCommand {
     }
 
     private String extractCommandMessage(String message) {
-        Pattern pattern = Pattern.compile("(?<=\\s)[A-Za-z\\s\\u00C0-\\u00fc%+?$@0-9{}!'\"/*|.~`()#^&<>]+");
+        Pattern pattern = Pattern.compile("(?<=\\s)[A-Za-z\\s\\u00C0-\\u00fc%+?$@0-9{}!'\"/*|.~`()#^&<>,]+");
         Matcher matcher = pattern.matcher(message);
         if(matcher.find())
             return matcher.group();
