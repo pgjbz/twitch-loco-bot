@@ -37,9 +37,10 @@ public class CommandChatListener implements LocoChatListener {
     }
 
     private void executeCustomCommand(ChatMessage chatMessage) {
+        String command = BotUtils.extractCommandFromMessage(chatMessage).toLowerCase();
         customCommandService.findByChannelAndCommand(chatMessage.getChannel(),
-                BotUtils.extractCommandFromMessage(chatMessage).toLowerCase())
-                .ifPresent(customCommand -> {
+                        command)
+                .ifPresentOrElse(customCommand -> {
                     if(customCommand.getOnlyMods() && !twitchConnection.getModsList().contains(chatMessage.getUser())) return;
                     if(nonNull(customCommand.getTokenCost()) && customCommand.getTokenCost() > 0) {
                         log.info("Command cost {} validating if user {} on channel {} have enough tokens",
@@ -68,7 +69,9 @@ public class CommandChatListener implements LocoChatListener {
                     String message = BotUtils.formatCommand(chatMessage, customCommand);
                     twitchConnection.sendMessage(message);
                     customCommandService.update(customCommand);
-                });
+                }, () -> log.info(
+                        String.format("Non existent command [%s] for channel [%s]", command, chatMessage.getChannel())
+                ));
     }
 
     private void executeStandardCommand(ChatMessage message, Command command) {
