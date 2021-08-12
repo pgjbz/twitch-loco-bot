@@ -31,9 +31,9 @@ public class CommandChatListener implements LocoChatListener {
     @Override
     public void listenChat(ChatMessage message) {
         executorService.submit(() -> {
-            if(!message.getMessage().startsWith("!"))
+            if(!message.getMessage().startsWith("!")
+                    || executeStandardCommand(message, extractCommand(message)))
                 return;
-            if(executeStandardCommand(message, extractCommand(message))) return;
             executeCustomCommand(message);
         });
     }
