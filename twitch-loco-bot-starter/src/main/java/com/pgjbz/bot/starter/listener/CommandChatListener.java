@@ -33,7 +33,7 @@ public class CommandChatListener implements LocoChatListener {
         executorService.submit(() -> {
             if(!message.getMessage().startsWith("!"))
                 return;
-            executeStandardCommand(message, extractCommand(message));
+            if(executeStandardCommand(message, extractCommand(message))) return;
             executeCustomCommand(message);
         });
     }
@@ -76,9 +76,12 @@ public class CommandChatListener implements LocoChatListener {
                 ));
     }
 
-    private void executeStandardCommand(ChatMessage message, Command command) {
-        if(nonNull(command))
+    private boolean executeStandardCommand(ChatMessage message, Command command) {
+        if(nonNull(command)) {
             command.getStandardCommand().executeCommand(message, twitchConnection);
+            return true;
+        }
+        return false;
     }
 
     private static Command extractCommand(ChatMessage chatMessage){

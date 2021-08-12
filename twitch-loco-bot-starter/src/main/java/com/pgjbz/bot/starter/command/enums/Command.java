@@ -16,7 +16,8 @@ public enum Command {
     BOT(new BotCommand()),
     CUSTOMCOM(new CustomComCommand(AbstractServiceFactory.getInstance().createCustomCommandService())),
     DELCUSTOMCOM(new DelCustomComCommand(AbstractServiceFactory.getInstance().createCustomCommandService())),
-    RANKING(new RankingCommand(AbstractServiceFactory.getInstance().createRankingService()));
+    RANKING(new RankingCommand(AbstractServiceFactory.getInstance().createRankingService())),
+    UPTIME(new UptimeCommand());
 
     private final StandardCommand standardCommand;
 

@@ -35,6 +35,7 @@ public class Application {
 
         connection.addChatListener(AbstractChatListenerFactory.getInstance().createChatSaveLister());
         connection.addChatListener(AbstractChatListenerFactory.getInstance().createCommandChatListener(connection));
+        connection.addChatListener(AbstractChatListenerFactory.getInstance().createBotTargetChatListener(connection));
         connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createIrcEventSaveListener());
         connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createNoticeIrcEventListener(connection));
         connection.addIrcEventListener(AbstractIrcEventListenerFactory.getInstance().createUserNoticeIrcEventListener(connection));

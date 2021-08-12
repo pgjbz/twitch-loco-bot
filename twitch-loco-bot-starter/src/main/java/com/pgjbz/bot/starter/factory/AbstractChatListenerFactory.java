@@ -17,4 +17,5 @@ public abstract class AbstractChatListenerFactory {
 
     public abstract LocoChatListener createChatSaveLister();
     public abstract LocoChatListener createCommandChatListener(TwitchConnection twitchConnection);
+    public abstract LocoChatListener createBotTargetChatListener(TwitchConnection twitchConnection);
 }
