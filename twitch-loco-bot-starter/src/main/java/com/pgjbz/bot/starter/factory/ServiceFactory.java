@@ -45,6 +45,12 @@ public class ServiceFactory extends AbstractServiceFactory {
     }
 
     @Override
+    public BotResponseService createBotResponseServiceService() {
+        BotResponseRepository botResponseRepository = AbstractRepositoryFactory.getInstance().createBotResponseRepository();
+        return new BotResponseServiceImpl(botResponseRepository);
+    }
+
+    @Override
     public CustomCommandService createCustomCommandService() {
         CustomCommandRepository customCommandRepository = AbstractRepositoryFactory.getInstance().createCustomCommandRepository();
         return new CustomCommandServiceImpl(customCommandRepository);

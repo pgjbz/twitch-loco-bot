@@ -133,3 +133,22 @@ create table if not exists custom_commands (
 	command text not null,
 	token_cost bigint
 );
+
+create table if not exists bot_target_responses (
+	id bigserial primary key,
+	message text
+);
+
+insert into bot_target_responses(message)
+values ('${touser} não sei cara'),
+('${touser} talvez sim talvez não'),
+('${touser} quem sabe, as vezes'),
+('não sei, me responda vc ${touser}'),
+('${touser} pergunta lá no posto hipiranga'),
+('${touser} não to gostando do tom q vc ta falando cmg'),
+('${touser} sim'),
+('${touser} nao'),
+('${touser} te conheço???'),
+('${touser} você não vai com a minha cara?'),
+('${touser} sla eu sou um bot... digo não sou um bot'),
+('${touser} pergunte ao streamer, ele sabe a resposta');

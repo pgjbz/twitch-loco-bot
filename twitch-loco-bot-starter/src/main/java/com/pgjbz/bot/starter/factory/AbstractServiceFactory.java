@@ -24,4 +24,5 @@ public abstract class AbstractServiceFactory {
     public abstract TokenService createTokenService();
     public abstract CustomCommandService createCustomCommandService();
     public abstract RankingService createRankingService();
+    public abstract BotResponseService createBotResponseServiceService();
 }

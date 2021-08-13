@@ -68,7 +68,7 @@ public class CommandChatListener implements LocoChatListener {
                         tokenService.update(token);
                     }
                     customCommand.incrementUseCount();
-                    String message = BotUtils.formatCommand(chatMessage, customCommand);
+                    String message = BotUtils.formatMessage(chatMessage, customCommand);
                     twitchConnection.sendMessage(message);
                     customCommandService.update(customCommand);
                 }, () -> log.info(

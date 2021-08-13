@@ -30,7 +30,7 @@ public class StealCommand implements StandardCommand {
         List<Steal> steals = stealService.findAll();
         if(!steals.isEmpty()) {
             String steal = steals.get(random.nextInt(steals.size())).getSteal();
-            twitchConnection.sendMessage(BotUtils.formatCommand(steal, chatMessage));
+            twitchConnection.sendMessage(BotUtils.formatMessage(steal, chatMessage));
         } else
             twitchConnection.sendMessage("Empty steals");
     }

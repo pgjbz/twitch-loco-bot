@@ -30,7 +30,7 @@ public class FlirtCommand implements StandardCommand {
         List<Flirt> flirts = flirtService.findAll();
         if(!flirts.isEmpty()) {
             String teaser = flirts.get(random.nextInt(flirts.size())).getTeaser();
-            twitchConnection.sendMessage(BotUtils.formatCommand(teaser, chatMessage));
+            twitchConnection.sendMessage(BotUtils.formatMessage(teaser, chatMessage));
         } else
             twitchConnection.sendMessage("Flirts is empty");
     }

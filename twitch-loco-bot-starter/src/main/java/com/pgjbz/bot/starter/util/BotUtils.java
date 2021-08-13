@@ -26,15 +26,15 @@ public class BotUtils {
         return Strings.EMPTY;
     }
 
-    public static String formatCommand(String command, ChatMessage chatMessage) {
+    public static String formatMessage(String command, ChatMessage chatMessage) {
         String touser = chatMessage.getUser();
         String target = extractTarget(chatMessage.getMessage());
         return command.replace("${touser}", touser)
                 .replace("${target}", isBlank(target) ? touser : target);
     }
 
-    public static String formatCommand(ChatMessage chatMessage, CustomCommand customCommand) {
-        String baseFormat = formatCommand(customCommand.getCommandMessage(), chatMessage);
+    public static String formatMessage(ChatMessage chatMessage, CustomCommand customCommand) {
+        String baseFormat = formatMessage(customCommand.getCommandMessage(), chatMessage);
         return baseFormat.replace("${count}", String.valueOf(customCommand.getUseCount()));
     }
 
