@@ -1,4 +1,4 @@
-package com.pgjbz.bot.starter.listener;
+package com.pgjbz.bot.starter.listener.chat;
 
 import com.pgjbz.bot.starter.command.enums.Command;
 import com.pgjbz.bot.starter.model.Token;

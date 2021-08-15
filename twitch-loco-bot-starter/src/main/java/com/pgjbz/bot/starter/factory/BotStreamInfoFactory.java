@@ -4,7 +4,7 @@ import com.pgjbz.bot.starter.chain.AbstractTokenChain;
 import com.pgjbz.bot.starter.chain.AddUnitTokenChain;
 import com.pgjbz.bot.starter.chain.CreateUnitTokenChain;
 import com.pgjbz.bot.starter.chain.UserCheckTokenChain;
-import com.pgjbz.bot.starter.listener.TokenStreamListener;
+import com.pgjbz.bot.starter.listener.stream.TokenStreamListener;
 import com.pgjbz.bot.starter.service.TokenService;
 import com.pgjbz.bot.starter.service.UserService;
 import com.pgjbz.twitch.loco.listener.BotStreamInfoEventListener;

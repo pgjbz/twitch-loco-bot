@@ -1,4 +1,4 @@
-package com.pgjbz.bot.starter.listener;
+package com.pgjbz.bot.starter.listener.chat;
 
 import com.pgjbz.bot.starter.chain.AbstractChatSaveChain;
 import com.pgjbz.twitch.loco.listener.LocoChatListener;

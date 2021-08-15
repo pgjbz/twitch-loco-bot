@@ -1,4 +1,4 @@
-package com.pgjbz.bot.starter.listener;
+package com.pgjbz.bot.starter.listener.event;
 
 import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
 import com.pgjbz.twitch.loco.model.IrcEvent;
@@ -7,17 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import static java.util.Objects.nonNull;
 
 @Log4j2
 @RequiredArgsConstructor
-public class JoinChatListener implements LocoIrcEventsListener {
+public class JoinChatIrcListener implements LocoIrcEventsListener {
 
     private final TwitchConnection twitchConnection;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     public void listenEvent(IrcEvent event) {

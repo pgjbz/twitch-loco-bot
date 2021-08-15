@@ -1,4 +1,4 @@
-package com.pgjbz.bot.starter.listener;
+package com.pgjbz.bot.starter.listener.event;
 
 import com.pgjbz.bot.starter.chain.AbstractIrcEventSaveChain;
 import com.pgjbz.twitch.loco.listener.LocoIrcEventsListener;
