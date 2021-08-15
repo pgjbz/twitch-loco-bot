@@ -7,13 +7,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Map;
 
-import static com.pgjbz.bot.starter.configs.BotConstants.CONFIG_FILE_SYSTEM_PROPERTY;
-
 @Log4j2
 public class DB {
 
     public static Connection getConnection() {
-        Map<String, String> configurations = Configuration.getConfigs(System.getProperty(CONFIG_FILE_SYSTEM_PROPERTY));
+        Map<String, String> configurations = Configuration.getConfigs();
         Connection connection = null;
         try {
             String username = configurations.get("DATABASE_USER");

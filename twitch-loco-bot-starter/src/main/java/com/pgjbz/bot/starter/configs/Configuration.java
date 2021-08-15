@@ -33,8 +33,9 @@ public class Configuration {
    }
 
    @SneakyThrows
-   public static Map<String, String> getConfigs(String configFile)  {
+   public static Map<String, String> getConfigs()  {
        if(isNull(configs)) {
+           String configFile = System.getProperty(CONFIG_FILE_SYSTEM_PROPERTY);
            log.info("Loading properties from {} ", configFile);
            configs = new HashMap<>();
            var properties = new Properties();
