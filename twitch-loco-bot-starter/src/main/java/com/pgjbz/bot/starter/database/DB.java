@@ -2,6 +2,7 @@ package com.pgjbz.bot.starter.database;
 
 import com.pgjbz.bot.starter.configs.Configuration;
 import lombok.extern.log4j.Log4j2;
+import org.flywaydb.core.Flyway;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,5 +26,17 @@ public class DB {
             log.error("Error on connect: {}", e.getMessage(), e);
         }
         return connection;
+    }
+
+    public static void flywayStart(){
+        Map<String, String> configurations = Configuration.getConfigs();
+        String username = configurations.get("DATABASE_USER");
+        String password = configurations.get("DATABASE_PASSWORD");
+        String host = configurations.get("DATABASE_HOST");
+        String port = configurations.get("DATABASE_PORT");
+        String databaseName = configurations.get("DATABASE_NAME");
+        String url  = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
+        Flyway flyway = Flyway.configure().dataSource(url, username, password).load();
+        flyway.migrate();
     }
 }

@@ -18,6 +18,7 @@
         <maven.assembly.plugin>3.3.0</maven.assembly.plugin>
         <postgresql.version>42.2.22</postgresql.version>
         <twitch-loco-lib.version>1.0-SNAPSHOT</twitch-loco-lib.version>
+        <flyway-core.version>7.13.0</flyway-core.version>
     </properties>
 
     <dependencies>
@@ -30,6 +31,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway-core.version}</version>
         </dependency>
     </dependencies>
 

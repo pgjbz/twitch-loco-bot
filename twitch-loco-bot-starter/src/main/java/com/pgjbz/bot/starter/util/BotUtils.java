@@ -29,13 +29,13 @@ public class BotUtils {
     public static String formatMessage(String command, ChatMessage chatMessage) {
         String touser = chatMessage.getUser();
         String target = extractTarget(chatMessage.getMessage());
-        return command.replace("${touser}", touser)
-                .replace("${target}", isBlank(target) ? touser : target);
+        return command.replace("$(touser)", touser)
+                .replace("$(target)", isBlank(target) ? touser : target);
     }
 
     public static String formatMessage(ChatMessage chatMessage, CustomCommand customCommand) {
         String baseFormat = formatMessage(customCommand.getCommandMessage(), chatMessage);
-        return baseFormat.replace("${count}", String.valueOf(customCommand.getUseCount()));
+        return baseFormat.replace("$(count)", String.valueOf(customCommand.getUseCount()));
     }
 
     public static String extractCommandFromMessage(ChatMessage chatMessage) {

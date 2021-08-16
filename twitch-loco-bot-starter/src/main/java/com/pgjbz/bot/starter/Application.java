@@ -1,6 +1,7 @@
 package com.pgjbz.bot.starter;
 
 import com.pgjbz.bot.starter.configs.Configuration;
+import com.pgjbz.bot.starter.database.DB;
 import com.pgjbz.bot.starter.factory.AbstractBotStreamInfoFactory;
 import com.pgjbz.bot.starter.factory.AbstractChatListenerFactory;
 import com.pgjbz.bot.starter.factory.AbstractIrcEventListenerFactory;
@@ -27,6 +28,8 @@ public class Application {
         log.info("Starting bot...");
 
         Configuration.configEnvironment(args);
+
+        DB.flywayStart();
 
         TwitchLoco twitchLoco = AbstractTwitchLocoFactory.getInstance().createTwitchLoco();
         TwitchLocoConnection connection = TwitchConnection.getConnection(twitchLoco);
