@@ -56,7 +56,7 @@ public class CommandChatListener implements LocoChatListener {
                                     chatMessage.getUser(),
                                     chatMessage.getChannel(),
                                     customCommand.getCommand());
-                            twitchConnection.sendMessage(String.format("@%s you don't have enough points to use this command", chatMessage.getUser()));
+                            twitchConnection.sendMessage(String.format("@%s you don't have enough tokens to use this command", chatMessage.getUser()));
                             return;
                         }
                         log.info("Perform payment to use command {} for user {} on channel {}",
