@@ -31,7 +31,7 @@ public class DiceCommand implements StandardCommand {
             return;
         }
         final String username = chatMessage.getUser();
-        int[] bet = extractBet(chatMessage.getMessage());
+        long[] bet = extractBet(chatMessage.getMessage());
         if(!chatMessage.getMessage().matches("!dice\\s\\d+\\s\\d+")
                 || bet[DICE_NUMBER_POS] > DICE_FACES
                 || bet[DICE_NUMBER_POS] < 1) {
@@ -43,8 +43,8 @@ public class DiceCommand implements StandardCommand {
         , () -> twitchConnection.sendMessage(String.format("%s you don't have tokens", username)));
     }
 
-    private int[] extractBet(String message) {
-        int[] values = new int[] {0, 0};
+    private long[] extractBet(String message) {
+        long[] values = new long[] {0, 0};
         final Pattern pattern = Pattern.compile("(?<=\\s)(\\d+)");
         Matcher matcher = pattern.matcher(message);
         int pos = -1;
@@ -53,10 +53,10 @@ public class DiceCommand implements StandardCommand {
         return values;
     }
 
-    private void executeTokenWon(Token token, String username, int[] bet, TwitchConnection twitchConnection) {
+    private void executeTokenWon(Token token, String username, long[] bet, TwitchConnection twitchConnection) {
         final Random random = new Random();
         int rollNumber = random.nextInt(DICE_FACES) + 1;
-        int betAmount = bet[BET_AMOUNT_POS];
+        long betAmount = bet[BET_AMOUNT_POS];
         if(token.getUnit() < bet[BET_AMOUNT_POS]) {
             twitchConnection.sendMessage(String.format("@%s you don't have enough tokens, you have %s tokens",
                     username,
@@ -64,7 +64,7 @@ public class DiceCommand implements StandardCommand {
             return;
         }
         if(rollNumber == bet[DICE_NUMBER_POS]) {
-            int winAmount = betAmount * 5;
+            long winAmount = betAmount * 5;
             token.addTokenUnit(winAmount);
             tokenService.update(token);
             twitchConnection.sendMessage(String.format("@%s you roll %s and won %s tokens", username, rollNumber, winAmount));
