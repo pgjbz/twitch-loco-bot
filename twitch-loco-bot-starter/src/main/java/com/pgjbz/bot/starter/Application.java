@@ -48,7 +48,7 @@ public class Application {
         botStreamInfoEventSchedule.addBotStreamInfoEventListener(
                 AbstractBotStreamInfoFactory.getInstance().createBotStreamTokenEventListener()
         );
-        botStreamInfoEventSchedule.startSchedule(5L);
+        botStreamInfoEventSchedule.startSchedule(1L);
 
         try(Scanner sc = new Scanner(System.in)) {
             String channelToJoin;

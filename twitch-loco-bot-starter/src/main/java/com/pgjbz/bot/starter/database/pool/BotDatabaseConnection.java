@@ -26,37 +26,45 @@ public class BotDatabaseConnection implements Closeable {
 
     @Override
     public void close() throws IOException {
+        if(connections == 0 && nonNull(connectionOpen) && (connectionOpen.getTime() - new Date().getTime() < 10000))
+            try {
+                connection.close();
+                closed = true;
+            } catch (SQLException e) {
+                log.error("Error on close connection", e);
+            }
+        else
+            decreaseConnection();
+    }
+
+    private void increaseConnections() {
         synchronized (this) {
-            if(connections == 0 && nonNull(connectionOpen) && (connectionOpen.getTime() - new Date().getTime() < 10000))
-                try {
-                    connection.close();
-                    closed = true;
-                } catch (SQLException e) {
-                    log.error("Error on close connection", e);
-                }
-            else
-                connections--;
+            connections++;
+        }
+    }
+
+    private void decreaseConnection() {
+        synchronized (this) {
+            connections--;
         }
     }
 
     public Connection getConnection() throws SQLException {
         Map<String, String> configurations = Configuration.getConfigs();
         try {
-            synchronized (this) {
-                if(nonNull(connection) && !connection.isClosed()) {
-                    connections++;
-                    return connection;
-                }
-                String username = configurations.get("DATABASE_USER");
-                String password = configurations.get("DATABASE_PASSWORD");
-                String host = configurations.get("DATABASE_HOST");
-                String port = configurations.get("DATABASE_PORT");
-                String databaseName = configurations.get("DATABASE_NAME");
-                String url  = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
-                connection = DriverManager.getConnection(url, username, password);
-                connections++;
-                connectionOpen = new Date();
+            if(nonNull(connection) && !connection.isClosed()) {
+                increaseConnections();
+                return connection;
             }
+            String username = configurations.get("DATABASE_USER");
+            String password = configurations.get("DATABASE_PASSWORD");
+            String host = configurations.get("DATABASE_HOST");
+            String port = configurations.get("DATABASE_PORT");
+            String databaseName = configurations.get("DATABASE_NAME");
+            String url  = "jdbc:postgresql://" + host + ":" + port + "/" + databaseName;
+            connection = DriverManager.getConnection(url, username, password);
+            increaseConnections();
+            connectionOpen = new Date();
         }catch (SQLException e) {
             log.error("Error on open connection", e);
         }
