@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Objects.nonNull;
 
@@ -18,15 +19,14 @@ import static java.util.Objects.nonNull;
 public class BotDatabaseConnection implements Closeable {
 
     private Connection connection;
-    @Getter
-    private int connections = 0;
+    private final AtomicInteger connections = new AtomicInteger(0);
     @Getter
     private boolean closed = false;
     private Date connectionOpen;
 
     @Override
     public void close() throws IOException {
-        if(connections == 0 && nonNull(connectionOpen) && (connectionOpen.getTime() - new Date().getTime() < 10000))
+        if(connections.get() <= 0 && nonNull(connectionOpen) && (connectionOpen.getTime() - new Date().getTime() < 10000))
             try {
                 connection.close();
                 closed = true;
@@ -38,15 +38,11 @@ public class BotDatabaseConnection implements Closeable {
     }
 
     private void increaseConnections() {
-        synchronized (this) {
-            connections++;
-        }
+        connections.incrementAndGet();
     }
 
     private void decreaseConnection() {
-        synchronized (this) {
-            connections--;
-        }
+        connections.decrementAndGet();
     }
 
     public Connection getConnection() throws SQLException {
@@ -69,5 +65,9 @@ public class BotDatabaseConnection implements Closeable {
             log.error("Error on open connection", e);
         }
         return connection;
+    }
+
+    public int getConnections() {
+        return connections.get();
     }
 }
