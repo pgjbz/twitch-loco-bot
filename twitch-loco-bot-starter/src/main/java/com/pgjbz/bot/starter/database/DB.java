@@ -50,19 +50,19 @@ public class DB {
 
     public static BotDatabaseConnection getConnection() {
         log.info("Getting connection from the pool");
-        synchronized (pool) {
-            BotDatabaseConnection botDatabaseConnection = null;
-            increaseIndex();
-            if (index >= MAX_CONN || index >= pool.size())
-                index = 0;
-            if (pool.size() < MAX_CONN) {
-                botDatabaseConnection = new BotDatabaseConnection();
-                pool.add(botDatabaseConnection);
-            } else
-                botDatabaseConnection = pool.get(index);
-            log.info("Connection size {}, index {}", botDatabaseConnection.getConnections(), index);
-            return botDatabaseConnection;
-        }
+
+        BotDatabaseConnection botDatabaseConnection = null;
+        increaseIndex();
+        if (index >= MAX_CONN || index >= pool.size())
+            index = 0;
+        if (pool.size() < MAX_CONN) {
+            botDatabaseConnection = new BotDatabaseConnection();
+            pool.add(botDatabaseConnection);
+        } else
+            botDatabaseConnection = pool.get(index);
+        log.info("Connection size {}, index {}", botDatabaseConnection.getConnections(), index);
+        return botDatabaseConnection;
+
     }
 
     public static void flywayStart(){
