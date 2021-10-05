@@ -20,7 +20,7 @@ public class DB {
     private static final int MAX_CONN = 5;
 
     private static final List<BotDatabaseConnection> pool = Collections.synchronizedList(new ArrayList<>());
-    private static int index = 0;
+    private static Integer index = 0;
     private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
     static {
@@ -42,10 +42,17 @@ public class DB {
                 TimeUnit.SECONDS);
     }
 
+    private static void increaseIndex() {
+        synchronized (index) {
+            index++;
+        }
+    }
+
     public static BotDatabaseConnection getConnection() {
         log.info("Getting connection from the pool");
         synchronized (pool) {
             BotDatabaseConnection botDatabaseConnection = null;
+            increaseIndex();
             if (index >= MAX_CONN || index >= pool.size())
                 index = 0;
             if (pool.size() < MAX_CONN) {
@@ -53,7 +60,7 @@ public class DB {
                 pool.add(botDatabaseConnection);
             } else
                 botDatabaseConnection = pool.get(index);
-            log.info("Connection size: {}", botDatabaseConnection.getConnections());
+            log.info("Connection size {}, index {}", botDatabaseConnection.getConnections(), index);
             return botDatabaseConnection;
         }
     }
