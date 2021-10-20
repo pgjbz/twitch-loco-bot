@@ -21,9 +21,7 @@ public class ChatMessageTests {
     @ParameterizedTest
     @MethodSource(value = "illegalArgumentsChatMessage")
     void testInstantiateWithConstructorExpectedIllegalArgumentExceptionWithCustomMessage(String message, String user, String channel){
-        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
-                () -> new ChatMessage(message, user, channel));
-        assertEquals(illegalArgumentException.getMessage(), "Message, user and channel is mandatory");
+        assertThrows(IllegalArgumentException.class, () -> new ChatMessage(message, user, channel));
     }
 
 

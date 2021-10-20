@@ -1,23 +1,15 @@
 package com.pgjbz.twitch.loco.model;
 
-import lombok.Getter;
-import lombok.ToString;
+import static com.pgjbz.twitch.loco.util.CheckUtil.requireNotBlank;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+public record ChatMessage (
+    String message,
+    String user,
+    String channel) {
 
-@Getter
-@ToString
-public class ChatMessage {
-
-    private final String message;
-    private final String user;
-    private final String channel;
-
-    public ChatMessage(String message, String user, String channel) {
-        if(isBlank(message) || isBlank(user) || isBlank(channel))
-            throw new IllegalArgumentException("Message, user and channel is mandatory");
-        this.message = message;
-        this.user = user;
-        this.channel = channel;
+    public ChatMessage {
+        requireNotBlank(message, "Message is mandatory");
+        requireNotBlank(user, "User is mandatory");
+        requireNotBlank(channel, " Channel is mandatory");
     }
 }

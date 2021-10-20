@@ -16,7 +16,7 @@ public class UserChatSaveChain extends AbstractChatSaveChain {
 
     @Override
     public void doChatSave(ChatMessage chatMessage) {
-        String username = chatMessage.getUser();
+        String username = chatMessage.user();
         if(BotUtils.isBot(username)) {
             log.info("Message from bot {}... skipping", username);
             return;

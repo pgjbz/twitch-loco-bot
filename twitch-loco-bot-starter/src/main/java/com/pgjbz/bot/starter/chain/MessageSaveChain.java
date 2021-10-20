@@ -6,6 +6,8 @@ import com.pgjbz.twitch.loco.model.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Date;
+
 import static java.util.Objects.nonNull;
 
 @Log4j2
@@ -20,7 +22,11 @@ public class MessageSaveChain extends AbstractChatSaveChain {
         log.info("Saving message {}", chatMessage.toString());
 
         try {
-            Message message = new Message(chatMessage);
+            Message message = new Message(null,
+                    chatMessage.message(),
+                    chatMessage.user(),
+                    chatMessage.channel(),
+                    new Date());
             messageService.insert(message);
         } catch (Exception e) {
             log.error("Error on save message {}", chatMessage.toString(), e);

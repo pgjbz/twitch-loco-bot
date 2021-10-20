@@ -22,12 +22,12 @@ public class UptimeCommand implements StandardCommand {
             log.info("Cannot perform command [uptime] now");
             return;
         }
-        final String uptimeUrl = DECA_API + UPTIME_PATH.replace("{channel}", chatMessage.getChannel());
+        final String uptimeUrl = DECA_API + UPTIME_PATH.replace("{channel}", chatMessage.channel());
         try {
             final String uptimeReturn = HttpUtil.execute(HttpMethod.GET, uptimeUrl);
             final String message = String.format("@%s channel %s uptime -> %s",
-                    chatMessage.getUser(),
-                    chatMessage.getChannel(),
+                    chatMessage.user(),
+                    chatMessage.channel(),
                     uptimeReturn);
             twitchConnection.sendMessage(message);
         } catch (Exception e){

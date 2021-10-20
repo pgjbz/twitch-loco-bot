@@ -26,9 +26,9 @@ public class BotTargetChatListener implements LocoChatListener {
 
     @Override
     public void listenChat(ChatMessage chatMessage) {
-        if(!chatMessage.getMessage().toLowerCase().contains(twitchConnection.getBotName().toLowerCase())
-            || chatMessage.getUser().toLowerCase().contains(twitchConnection.getBotName().toLowerCase())) return;
-        log.info("{} receive message with bot target", chatMessage.getUser());
+        if(!chatMessage.message().toLowerCase().contains(twitchConnection.getBotName().toLowerCase())
+            || chatMessage.user().toLowerCase().contains(twitchConnection.getBotName().toLowerCase())) return;
+        log.info("{} receive message with bot target", chatMessage.user());
 
         executors.submit(() -> {
             final List<BotResponse> botResponses = botResponseService.findAll();

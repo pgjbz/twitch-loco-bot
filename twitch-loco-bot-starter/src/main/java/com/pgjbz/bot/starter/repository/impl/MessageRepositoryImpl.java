@@ -27,7 +27,7 @@ public class MessageRepositoryImpl implements MessageRepository {
         sql.append("   CHANNEL, ");
         sql.append("   MESSAGE_DATE) ");
         sql.append(" VALUES(?,?, ?, CURRENT_TIMESTAMP) ");
-        return jdbcTemplate.update(sql.toString(), new Object[]{message.getUser(), message.getMessage(), message.getChannel()}) > 0;
+        return jdbcTemplate.update(sql.toString(), new Object[]{message.user(), message.message(), message.channel()}) > 0;
     }
 
     @Override

@@ -8,8 +8,8 @@ import lombok.ToString;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static com.pgjbz.twitch.loco.util.CheckUtil.requireNonNull;
+import static com.pgjbz.twitch.loco.util.CheckUtil.requireNotBlank;
 
 @Getter
 @ToString
@@ -23,10 +23,8 @@ public class IrcEvent {
     private final Map<String, String> keys = new HashMap<>();
 
     public IrcEvent(CommandReceive commandReceive, String username, String channel) {
-        if(isNull(commandReceive) || isBlank(username) || isBlank(channel))
-            throw new IllegalArgumentException("Command receive, username and channel is mandatory |" + commandReceive + "|" + username + "|" + channel);
-        this.commandReceive = commandReceive;
-        this.username = username;
-        this.channel = channel;
+        this.commandReceive = requireNonNull(commandReceive, "Command receive is mandatory");
+        this.username = requireNotBlank(username, "Username is mandatory");
+        this.channel = requireNotBlank(channel, "Channel is mandatory");
     }
 }

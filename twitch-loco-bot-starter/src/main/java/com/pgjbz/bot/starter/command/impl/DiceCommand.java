@@ -30,15 +30,15 @@ public class DiceCommand implements StandardCommand {
             log.info("Cannot perform command [dice] now");
             return;
         }
-        final String username = chatMessage.getUser();
-        long[] bet = extractBet(chatMessage.getMessage());
-        if(!chatMessage.getMessage().matches("!dice\\s\\d+\\s\\d+")
+        final String username = chatMessage.user();
+        long[] bet = extractBet(chatMessage.message());
+        if(!chatMessage.message().matches("!dice\\s\\d+\\s\\d+")
                 || bet[DICE_NUMBER_POS] > DICE_FACES
                 || bet[DICE_NUMBER_POS] < 1) {
             twitchConnection.sendMessage(String.format("@%s please use !dice dice_number[1-6] bet_amount", username));
             return;
         }
-        tokenService.findByPk(new TokenPk(username, chatMessage.getChannel())).ifPresentOrElse(token ->
+        tokenService.findByPk(new TokenPk(username, chatMessage.channel())).ifPresentOrElse(token ->
             executeTokenWon(token, username, bet, twitchConnection)
         , () -> twitchConnection.sendMessage(String.format("%s you don't have tokens", username)));
     }

@@ -20,6 +20,6 @@ public class StandardLocoChatListener implements LocoChatListener {
     @Override
     public void listenChat(ChatMessage message) {
         if(nonNull(message))
-           executorService.submit(() -> log.info(message.getUser() + " on " + message.getChannel() + " -> " + message.getMessage()));
+           executorService.submit(() -> log.info(message.user() + " on " + message.channel() + " -> " + message.message()));
     }
 }

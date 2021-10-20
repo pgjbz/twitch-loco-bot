@@ -31,7 +31,7 @@ public class CommandChatListener implements LocoChatListener {
     @Override
     public void listenChat(ChatMessage message) {
         executorService.submit(() -> {
-            if(!message.getMessage().startsWith("!")
+            if(!message.message().startsWith("!")
                     || executeStandardCommand(message, extractCommand(message)))
                 return;
             executeCustomCommand(message);
@@ -40,29 +40,29 @@ public class CommandChatListener implements LocoChatListener {
 
     private void executeCustomCommand(ChatMessage chatMessage) {
         String command = BotUtils.extractCommandFromMessage(chatMessage).toLowerCase();
-        customCommandService.findByChannelAndCommand(chatMessage.getChannel(),
+        customCommandService.findByChannelAndCommand(chatMessage.channel(),
                         command)
                 .ifPresentOrElse(customCommand -> {
-                    if(customCommand.getOnlyMods() && !twitchConnection.getModsList().contains(chatMessage.getUser())) return;
+                    if(customCommand.getOnlyMods() && !twitchConnection.getModsList().contains(chatMessage.user())) return;
                     if(nonNull(customCommand.getTokenCost()) && customCommand.getTokenCost() > 0) {
                         log.info("Command cost {} validating if user {} on channel {} have enough tokens",
                                 customCommand.getTokenCost(),
-                                chatMessage.getUser(),
-                                chatMessage.getChannel());
-                        Optional<Token> optionalToken = tokenService.findByPk(new TokenPk(chatMessage.getUser(), chatMessage.getChannel()));
+                                chatMessage.user(),
+                                chatMessage.channel());
+                        Optional<Token> optionalToken = tokenService.findByPk(new TokenPk(chatMessage.user(), chatMessage.channel()));
                         if(optionalToken.isEmpty()
                             || customCommand.getTokenCost() > optionalToken.get().getUnit()) {
                             log.info("User {} on channel {} don't have enough tokens to perform command {}",
-                                    chatMessage.getUser(),
-                                    chatMessage.getChannel(),
+                                    chatMessage.user(),
+                                    chatMessage.channel(),
                                     customCommand.getCommand());
-                            twitchConnection.sendMessage(String.format("@%s you don't have enough tokens to use this command", chatMessage.getUser()));
+                            twitchConnection.sendMessage(String.format("@%s you don't have enough tokens to use this command", chatMessage.user()));
                             return;
                         }
                         log.info("Perform payment to use command {} for user {} on channel {}",
                                 customCommand.getCommand(),
-                                chatMessage.getMessage(),
-                                chatMessage.getChannel());
+                                chatMessage.message(),
+                                chatMessage.channel());
                         Token token = optionalToken.get();
                         token.removeTokenUnit(customCommand.getTokenCost());
                         tokenService.update(token);
@@ -72,7 +72,7 @@ public class CommandChatListener implements LocoChatListener {
                     twitchConnection.sendMessage(message);
                     customCommandService.update(customCommand);
                 }, () -> log.info(
-                        String.format("Non existent command [%s] for channel [%s]", command, chatMessage.getChannel())
+                        String.format("Non existent command [%s] for channel [%s]", command, chatMessage.channel())
                 ));
     }
 
@@ -90,7 +90,7 @@ public class CommandChatListener implements LocoChatListener {
             if(StringUtils.isNotBlank(command))
                 return Command.valueOf(command.toUpperCase());
         } catch (Exception e){
-            log.warn("Unknown command {}", chatMessage.getMessage());
+            log.warn("Unknown command {}", chatMessage.message());
         }
         return null;
     }

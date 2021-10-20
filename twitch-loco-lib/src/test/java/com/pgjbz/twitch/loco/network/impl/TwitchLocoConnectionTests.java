@@ -124,7 +124,7 @@ public class TwitchLocoConnectionTests {
                 doNothing().when(mock).run())) {
             twitchConnection.startThread();
             Runnable run = mockedConstruction.constructed().get(0);
-            verify(run).run();
+            verify(run, timeout(1000)).run();
         }
     }
 

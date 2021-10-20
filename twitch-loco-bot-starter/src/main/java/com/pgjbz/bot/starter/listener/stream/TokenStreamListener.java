@@ -26,12 +26,12 @@ public class TokenStreamListener implements BotStreamInfoEventListener {
     @Override
     public void listenBotEvent(StreamInfo streamInfo) {
         final long start = System.currentTimeMillis();
-        log.info("Event receive, starting process {} chatters...", streamInfo.getChatterCounter());
+        log.info("Event receive, starting process {} chatters...", streamInfo.chatterCounter());
         final ExecutorService executorService = Executors.newFixedThreadPool(40);
-        Chatters chatters = streamInfo.getChatters();
+        Chatters chatters = streamInfo.chatters();
         List<String> viewers = getViewers(chatters);
         final List<Future<?>> futures = new CopyOnWriteArrayList<>();
-        Optional<String> streamer = streamInfo.getChatters().getBroadcaster().stream().findAny();
+        Optional<String> streamer = streamInfo.chatters().getBroadcaster().stream().findAny();
         streamer.ifPresentOrElse(s ->
                 futures.addAll(
                         viewers.stream().map(viewer -> executorService.submit(() ->

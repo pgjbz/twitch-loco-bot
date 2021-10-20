@@ -27,8 +27,8 @@ public class BotUtils {
     }
 
     public static String formatMessage(String command, ChatMessage chatMessage) {
-        String touser = chatMessage.getUser();
-        String target = extractTarget(chatMessage.getMessage());
+        String touser = chatMessage.user();
+        String target = extractTarget(chatMessage.message());
         return command.replace("$(touser)", touser)
                 .replace("$(target)", isBlank(target) ? touser : target);
     }
@@ -39,7 +39,7 @@ public class BotUtils {
     }
 
     public static String extractCommandFromMessage(ChatMessage chatMessage) {
-        String message = chatMessage.getMessage();
+        String message = chatMessage.message();
         Pattern pattern = Pattern.compile("(?<=^!)([A-Za-z]+)(?!\\S)");
         Matcher matcher = pattern.matcher(message);
         if(matcher.find())

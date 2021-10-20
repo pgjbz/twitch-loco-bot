@@ -25,13 +25,13 @@ public class FollowAgeCommand implements StandardCommand {
 
         final String followAgeUrl = DECA_API +
                 FOLLOWAGE_PATH.replace("${channel}",
-                chatMessage.getChannel()).replace("${username}", chatMessage.getUser());
+                chatMessage.channel()).replace("${username}", chatMessage.user());
 
         try {
             final String followAgeReturn = HttpUtil.execute(HttpMethod.GET, followAgeUrl);
             final String message = String.format("@%s follows %s for %s",
-                    chatMessage.getUser(),
-                    chatMessage.getChannel(),
+                    chatMessage.user(),
+                    chatMessage.channel(),
                     followAgeReturn);
             twitchConnection.sendMessage(message);
         } catch (Exception e){
