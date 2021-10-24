@@ -6,9 +6,10 @@ import com.pgjbz.bot.starter.database.exception.EmptyResultException;
 import com.pgjbz.bot.starter.database.exception.MoreThanOneException;
 import com.pgjbz.bot.starter.database.jdbc.JdbcTemplate;
 import com.pgjbz.bot.starter.database.jdbc.RowMapper;
+import com.pgjbz.bot.starter.database.pool.BotDatabaseConnection;
 import lombok.NonNull;
 
-import java.sql.Connection;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,12 +23,12 @@ public class JdbcTemplateImpl implements JdbcTemplate {
     public int update(@NonNull String sql, @NonNull Object[] params) {
         if(isBlank(sql))
             throw new IllegalArgumentException("SQL cannot be empty");
-        try(Connection connection = DB.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql)) {
+        try(BotDatabaseConnection botConnection = DB.getConnection();
+            PreparedStatement ps = botConnection.getConnection().prepareStatement(sql)) {
             for(int i = 0; i < params.length; i++)
                 ps.setObject(i+1, params[i]);
             return ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             throw new DatabaseException(e.getMessage());
         }
     }
@@ -37,8 +38,8 @@ public class JdbcTemplateImpl implements JdbcTemplate {
     }
 
     public <T> T queryForObject(@NonNull String sql, @NonNull Object[] params, @NonNull RowMapper<T> rowMapper) {
-        try(Connection connection = DB.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql)) {
+        try(BotDatabaseConnection botConnection = DB.getConnection();
+            PreparedStatement ps = botConnection.getConnection().prepareStatement(sql)) {
             for(int i = 0; i < params.length; i++)
                 ps.setObject(i+1, params[i]);
             T t = null;
@@ -51,14 +52,14 @@ public class JdbcTemplateImpl implements JdbcTemplate {
                     t =  rowMapper.rowMap(rs, 1);
             }
             return t;
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             throw new DatabaseException(e.getMessage());
         }
     }
 
     public <T> List<T> query(String sql, @NonNull Object[] params, @NonNull RowMapper<T> rowMapper) {
-        try(Connection connection = DB.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql)) {
+        try(BotDatabaseConnection botConnection = DB.getConnection();
+            PreparedStatement ps = botConnection.getConnection().prepareStatement(sql)) {
             for(int i = 0; i < params.length; i++)
                 ps.setObject(i+1, params[i]);
             List<T> list = new ArrayList<>();
@@ -69,7 +70,7 @@ public class JdbcTemplateImpl implements JdbcTemplate {
                     list.add(rowMapper.rowMap(rs, rs.getRow()));
             }
             return list;
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             throw new DatabaseException(e.getMessage());
         }
     }

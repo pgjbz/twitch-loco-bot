@@ -27,7 +27,7 @@ public class TokenStreamListener implements BotStreamInfoEventListener {
     public void listenBotEvent(StreamInfo streamInfo) {
         final long start = System.currentTimeMillis();
         log.info("Event receive, starting process {} chatters...", streamInfo.getChatterCounter());
-        final ExecutorService executorService = Executors.newFixedThreadPool(5);
+        final ExecutorService executorService = Executors.newFixedThreadPool(40);
         Chatters chatters = streamInfo.getChatters();
         List<String> viewers = getViewers(chatters);
         final List<Future<?>> futures = new CopyOnWriteArrayList<>();
