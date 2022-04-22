@@ -1,11 +1,8 @@
 package com.pgjbz.bot.starter.configs;
 
-import com.pgjbz.bot.starter.factory.AbstractServiceFactory;
-import com.pgjbz.bot.starter.model.Bot;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
-import org.flywaydb.core.Flyway;
+import static com.pgjbz.bot.starter.configs.BotConstants.CONFIG_FILE_SYSTEM_PROPERTY;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,13 +12,18 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
 
-import static com.pgjbz.bot.starter.configs.BotConstants.CONFIG_FILE_SYSTEM_PROPERTY;
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import com.pgjbz.bot.starter.factory.AbstractServiceFactory;
+import com.pgjbz.bot.starter.model.Bot;
+
+import lombok.Getter;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 
 @Getter
 @Log4j2
 public class Configuration {
+
+    private Configuration() {}
 
     private static Map<String, String> configs;
     @Getter

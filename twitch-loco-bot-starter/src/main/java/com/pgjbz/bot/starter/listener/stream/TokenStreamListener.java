@@ -1,46 +1,54 @@
 package com.pgjbz.bot.starter.listener.stream;
 
-import com.pgjbz.bot.starter.chain.AbstractTokenChain;
-import com.pgjbz.bot.starter.model.Token;
-import com.pgjbz.bot.starter.model.pk.TokenPk;
-import com.pgjbz.twitch.loco.listener.BotStreamInfoEventListener;
-import com.pgjbz.twitch.loco.model.Chatters;
-import com.pgjbz.twitch.loco.model.StreamInfo;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import com.pgjbz.bot.starter.chain.AbstractTokenChain;
+import com.pgjbz.bot.starter.model.Token;
+import com.pgjbz.bot.starter.model.pk.TokenPk;
+import com.pgjbz.bot.starter.util.ListUtils;
+import com.pgjbz.twitch.loco.listener.BotStreamInfoEventListener;
+import com.pgjbz.twitch.loco.model.Chatters;
+import com.pgjbz.twitch.loco.model.StreamInfo;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 @Log4j2
 @RequiredArgsConstructor
 public class TokenStreamListener implements BotStreamInfoEventListener {
 
+    private static final int THREADS = 40;
     private final AbstractTokenChain abstractTokenChain;
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(THREADS);
 
     @Override
     public void listenBotEvent(StreamInfo streamInfo) {
         final long start = System.currentTimeMillis();
         log.info("Event receive, starting process {} chatters...", streamInfo.getChatterCounter());
-        final ExecutorService executorService = Executors.newFixedThreadPool(40);
         Chatters chatters = streamInfo.getChatters();
-        List<String> viewers = getViewers(chatters);
-        final List<Future<?>> futures = new CopyOnWriteArrayList<>();
+        final List<String> viewers = getViewers(chatters);
+
+        final List<Future<?>> futures = Collections.synchronizedList(new ArrayList<>());
+
         Optional<String> streamer = streamInfo.getChatters().getBroadcaster().stream().findAny();
-        streamer.ifPresentOrElse(s ->
-                futures.addAll(
-                        viewers.stream().map(viewer -> executorService.submit(() ->
-                            abstractTokenChain.doAddUnits(new Token(new TokenPk(viewer, s), null)))
-                ).collect(Collectors.toList())), () -> log.info("Empty streamer..."));
+
+        streamer.ifPresentOrElse(
+                s -> ListUtils.split(viewers.stream().map(viewer -> new Token(new TokenPk(viewer, s), null))
+                        .collect(Collectors.toList()), THREADS)
+                        .stream()
+                        .map(list -> executorService.submit(() -> abstractTokenChain.doAddUnits(list))),
+                () -> log.info("Empty streamer..."));
+
         do
             futures.removeIf(Future::isDone);
         while (!futures.isEmpty());
-        executorService.shutdown();
         log.info("Finish token distribution in {}ms", (System.currentTimeMillis() - start));
     }
 

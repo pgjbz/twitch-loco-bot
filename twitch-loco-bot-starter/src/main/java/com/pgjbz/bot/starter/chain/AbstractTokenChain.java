@@ -1,8 +1,10 @@
 package com.pgjbz.bot.starter.chain;
 
-import com.pgjbz.bot.starter.model.Token;
-
 import static java.util.Objects.isNull;
+
+import java.util.List;
+
+import com.pgjbz.bot.starter.model.Token;
 
 public abstract class AbstractTokenChain {
 
@@ -14,6 +16,6 @@ public abstract class AbstractTokenChain {
         return next.addNext(nextStep);
     }
 
-    public abstract void doAddUnits(Token token);
+    public abstract void doAddUnits(List<Token> token);
 
 }

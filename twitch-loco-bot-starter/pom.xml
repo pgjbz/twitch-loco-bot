@@ -16,7 +16,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.assembly.plugin>3.3.0</maven.assembly.plugin>
-        <postgresql.version>42.2.22</postgresql.version>
+        <postgresql.version>42.3.3</postgresql.version>
         <twitch-loco-lib.version>1.0-SNAPSHOT</twitch-loco-lib.version>
         <flyway-core.version>7.13.0</flyway-core.version>
     </properties>

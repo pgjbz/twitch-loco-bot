@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,4 +96,20 @@ public class TokenRepositoryImpl implements TokenRepository {
         Long unit = rs.getLong("UNIT");
         return new Token(new TokenPk(username, channel), unit);
     };
+
+    @Override
+    public boolean update(List<Token> tokens) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(" UPDATE ");
+        sql.append("   TOKENS ");
+        sql.append(" SET ");
+        sql.append("   UNIT = ? ");
+        sql.append(" WHERE ");
+        sql.append("   USERNAME = ? ");
+        sql.append("   AND CHANNEL = ? ");
+        List<Object[]> tokensInsert = new LinkedList<>();
+        for(var token: tokens)
+            tokensInsert.add(new Object[]{token.getUnit(), token.getPk().getUsername(), token.getPk().getChannel()});
+        return jdbcTemplate.batchUpdate(sql.toString(), tokensInsert) > 0;
+    }
 }

@@ -8,6 +8,7 @@ public interface JdbcTemplate {
 
     int update(@NonNull String sql, @NonNull Object[] params);
     int update(String sql);
+    int batchUpdate(@NonNull String sql, @NonNull List<Object[]> params);
     <T> T queryForObject(@NonNull String sql, @NonNull Object[] params, @NonNull RowMapper<T> rowMapper);
     <T> List<T> query(String sql, @NonNull Object[] params, @NonNull RowMapper<T> rowMapper);
     <T> List<T> query(String sql, RowMapper<T> rowMapper);
