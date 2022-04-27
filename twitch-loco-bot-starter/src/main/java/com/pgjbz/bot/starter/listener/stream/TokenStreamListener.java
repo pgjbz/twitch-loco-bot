@@ -43,7 +43,8 @@ public class TokenStreamListener implements BotStreamInfoEventListener {
                 s -> ListUtils.split(viewers.stream().map(viewer -> new Token(new TokenPk(viewer, s), null))
                         .collect(Collectors.toList()), THREADS)
                         .stream()
-                        .map(list -> executorService.submit(() -> abstractTokenChain.doAddUnits(list))),
+                        .map(list -> executorService.submit(() -> abstractTokenChain.doAddUnits(list)))
+                        .forEach(futures::add),
                 () -> log.info("Empty streamer..."));
 
         do
