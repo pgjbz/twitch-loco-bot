@@ -1,10 +1,15 @@
-const IRC_URL: &str = "irc.chat.twitch.tv";
-const IRC_PORT: u16 = 6667;
-
 use std::{
+    collections::HashMap,
     io::{Read, Result as IOResult, Write},
     net::TcpStream,
 };
+
+use self::parser::MessageParser;
+
+mod parser;
+
+const IRC_PORT: u16 = 6667;
+const IRC_URL: &str = "irc.chat.twitch.tv";
 
 pub enum Command {
     Pass,
@@ -25,10 +30,49 @@ impl Command {
     }
 }
 
+pub struct LocoConnection {
+    connection: Option<TcpStream>,
+    _nickname: String,
+    channel: String,
+}
+
 pub struct LocoConfig {
     oauth: String,
     nickname: String,
     channel_to_join: String,
+}
+
+#[derive(Debug)]
+pub struct Irc {
+    pub irc_type: IrcType,
+    pub nickname: Option<String>,
+    pub keys: Option<HashMap<String, String>>,
+    pub channel: String,
+    pub message: Option<String>,
+}
+
+impl Irc {
+    pub fn new(
+        irc_type: IrcType,
+        nickname: Option<String>,
+        keys: Option<HashMap<String, String>>,
+        channel: String,
+        message: Option<String>,
+    ) -> Self {
+        Self {
+            irc_type,
+            nickname,
+            keys,
+            channel,
+            message,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum IrcType {
+    Message,
+    Event,
 }
 
 impl LocoConfig {
@@ -41,12 +85,6 @@ impl LocoConfig {
     }
 }
 
-pub struct LocoConnection {
-    connection: Option<TcpStream>,
-    _nickname: String,
-    channel: String,
-}
-
 impl LocoConnection {
     pub fn new(loco_config: LocoConfig) -> IOResult<LocoConnection> {
         let connection = TcpStream::connect(&format!("{}:{}", IRC_URL, IRC_PORT))?;
@@ -55,7 +93,7 @@ impl LocoConnection {
             _nickname: loco_config.nickname.clone(),
             channel: loco_config.channel_to_join.clone(),
         };
-        loco_connection.buffer_commands(&[
+        loco_connection.batch_command(&[
             Command::Pass.build(loco_config.oauth.clone(), &loco_connection),
             Command::Nick.build(loco_config.nickname.clone(), &loco_connection),
             Command::Join.build(loco_config.channel_to_join, &loco_connection),
@@ -66,7 +104,7 @@ impl LocoConnection {
         Ok(loco_connection)
     }
 
-    fn buffer_commands(&mut self, vec: &[String]) -> IOResult<()> {
+    fn batch_command(&mut self, vec: &[String]) -> IOResult<()> {
         let map = vec.iter().flat_map(|val| val.bytes()).collect::<Vec<u8>>();
         if let Some(connection) = &mut self.connection {
             connection.write_all(&map)?;
@@ -78,19 +116,27 @@ impl LocoConnection {
     pub fn send_command(&mut self, command: Command, arg: &str) -> IOResult<()> {
         let command = command.build(arg.into(), self);
         if let Some(connection) = &mut self.connection {
-            connection.write(command.as_bytes())?;
+            connection.write_all(command.as_bytes())?;
             connection.flush()?;
         }
         Ok(())
     }
 
     //TODO: greceful shutdown
-    pub fn read(&mut self, exec: impl Fn(String)) {
+    pub fn read(&mut self, exec: impl Fn(Irc)) {
         if let Some(connection) = &mut self.connection {
             loop {
                 let mut buf = [0; 1024];
-                connection.read(&mut buf).unwrap();
-                exec(String::from_utf8(Vec::from(buf)).unwrap());
+                connection.read_exact(&mut buf).unwrap();
+                if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
+                    //for now only process chat message
+                    if !msg.starts_with("@badge") || !msg.contains("PRIVMSG") { 
+                        continue;
+                    }
+                    if let Ok(parsed) = MessageParser::parse(msg) {
+                        exec(parsed);
+                    }
+                }
             }
         }
     }
@@ -111,7 +157,7 @@ mod tests {
             (Command::Join, "test", "JOIN #test\r\n"),
             (Command::Nick, "test", "NICK test\r\n"),
             (Command::Privmsg, "test", "PRIVMSG #test :test\r\n"),
-            (Command::Pass, "test", "PASS oauth:test\r\n")
+            (Command::Pass, "test", "PASS oauth:test\r\n"),
         ];
 
         for (command, param, expected) in inputs {
