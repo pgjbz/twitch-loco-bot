@@ -1,5 +1,5 @@
 [package]
-name = "irc-twitch"
+name = "twitch-loco"
 version = "0.1.0"
 edition = "2021"
 authors = ["Paulo Gabriel Justino Bezerra <contact@pgjbz.dev>"]
@@ -8,4 +8,5 @@ authors = ["Paulo Gabriel Justino Bezerra <contact@pgjbz.dev>"]
 
 [dependencies]
 
-
+dotenv = "0.15.0"
+irc-twitch = { path = "../irc-twitch" }
