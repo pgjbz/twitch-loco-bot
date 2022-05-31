@@ -4,9 +4,15 @@ use std::{
     net::TcpStream,
 };
 
-use self::parser::MessageParser;
+use self::parser::{EventParser, MessageParser};
 
 mod parser;
+
+pub type IrcResult = Result<Irc, String>;
+
+trait Parser {
+    fn parse(&self, input: String) -> IrcResult;
+}
 
 const IRC_PORT: u16 = 6667;
 const IRC_URL: &str = "irc.chat.twitch.tv";
@@ -72,7 +78,9 @@ impl Irc {
 #[derive(Debug)]
 pub enum IrcType {
     Message,
-    Event,
+    Join,
+    Part,
+    Usernotice,
 }
 
 impl LocoConfig {
@@ -127,17 +135,24 @@ impl LocoConnection {
         if let Some(connection) = &mut self.connection {
             loop {
                 let mut buf = [0; 1024];
-                connection.read_exact(&mut buf).unwrap();
+                connection.read(&mut buf).unwrap();
                 if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
                     //for now only process chat message
-                    if !msg.starts_with("@badge") || !msg.contains("PRIVMSG") { 
-                        continue;
-                    }
-                    if let Ok(parsed) = MessageParser::parse(msg) {
-                        exec(parsed);
-                    }
+                    let parser: Box<dyn Parser> = if msg.contains("PRIVMSG") {
+                        Box::new(MessageParser::default())
+                    } else {
+                        Box::new(EventParser::default())
+                    };
+                    LocoConnection::execute(msg, parser, &exec);
                 }
             }
+        }
+    }
+
+    fn execute(input: String, parser: Box<dyn Parser>, exec: impl Fn(Irc)) {
+        match parser.as_ref().parse(input) {
+            Ok(parsed) => exec(parsed),
+            Err(err) => eprintln!("{}", err),
         }
     }
 }
