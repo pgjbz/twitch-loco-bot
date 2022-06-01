@@ -1,4 +1,4 @@
-use regex::Regex;
+use fancy_regex::Regex;
 
 use super::{IrcResult, IrcType};
 
@@ -7,15 +7,14 @@ pub(super) struct Parser;
 impl Parser {
     pub(super) fn parse(&self, input: String) -> IrcResult {
         let irc_type = self.extract_event(&input);
-        let channel = self.extract_channel(&input);
-        let nickname = self.extract_nickname(&input, &irc_type);
+        let _channel = self.extract_channel(&input);
+        let _nickname = self.extract_nickname(&input, &irc_type);
         todo!()
     }
 
     fn extract_event(&self, input: &str) -> IrcType {
         let regex = Regex::new("((?<=\\s)([A-Z]+))|(([A-Z]+)(?=\\s))").unwrap();
-        let to_irc_type = |i: &str| -> IrcType { i.into() }; //workaround
-        to_irc_type(&self.match_regex_string(regex, &input)) 
+        self.match_regex_string(regex, &input).into()
     }
 
     fn extract_channel(&self, input: &str) -> String {
@@ -30,11 +29,11 @@ impl Parser {
 
     fn match_regex_string(&self, regex: Regex, input: &str) -> String {
         match regex.captures(&input) {
-            Some(cap) => match cap.get(1) {
+            Ok(Some(cap)) => match cap.get(0) {
                 Some(m) => m.as_str().into(),
                 None => "none".into(),
             },
-            None => "none".into(),
+            _ => "none".into(),
         }
     }
 }

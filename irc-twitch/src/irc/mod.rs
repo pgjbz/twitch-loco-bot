@@ -4,7 +4,7 @@ use std::{
     net::TcpStream,
 };
 
-use regex::Regex;
+use fancy_regex::Regex;
 
 use self::parser::Parser;
 
@@ -106,9 +106,9 @@ impl IrcType {
     }
 }
 
-impl From<&str> for IrcType {
-    fn from(value: &str) -> Self {
-        match value {
+impl From<String> for IrcType {
+    fn from(value: String) -> Self {
+        match &value[..] {
             "PRIVMSG" => Self::Message,
             "JOIN" => Self::Join,
             "PART" => Self::Part,
