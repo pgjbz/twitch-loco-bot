@@ -1,65 +1,42 @@
-use std::collections::HashMap;
+use regex::Regex;
 
-use super::{Irc, IrcResult, IrcType, Parser};
+use super::{IrcResult, IrcType};
 
-#[derive(Default)]
-pub(super) struct MessageParser;
-#[derive(Default)]
-pub(super) struct EventParser;
+pub(super) struct Parser;
 
-impl Parser for MessageParser {
-    fn parse(&self, input: String) -> IrcResult {
-        println!("message parser");
-        if !input.starts_with("@badge-info") || input.is_empty() {
-            return Err("invalid string".into());
+impl Parser {
+    pub(super) fn parse(&self, input: String) -> IrcResult {
+        let irc_type = self.extract_event(&input);
+        let channel = self.extract_channel(&input);
+        let nickname = self.extract_nickname(&input, &irc_type);
+        todo!()
+    }
+
+    fn extract_event(&self, input: &str) -> IrcType {
+        let regex = Regex::new("((?<=\\s)([A-Z]+))|(([A-Z]+)(?=\\s))").unwrap();
+        let to_irc_type = |i: &str| -> IrcType { i.into() }; //workaround
+        to_irc_type(&self.match_regex_string(regex, &input)) 
+    }
+
+    fn extract_channel(&self, input: &str) -> String {
+        let regex = Regex::new("(?<=\\s#)(\\w+)").unwrap();
+        self.match_regex_string(regex, input)
+    }
+
+    fn extract_nickname(&self, input: &str, irc_type: &IrcType) -> String {
+        let regex = irc_type.display_name();
+        self.match_regex_string(regex, input)
+    }
+
+    fn match_regex_string(&self, regex: Regex, input: &str) -> String {
+        match regex.captures(&input) {
+            Some(cap) => match cap.get(1) {
+                Some(m) => m.as_str().into(),
+                None => "none".into(),
+            },
+            None => "none".into(),
         }
-        let mut splited = input.split(" :");
-        let keys_side = splited.next().unwrap();
-        let infos = splited.next().unwrap();
-        let message = splited.next().unwrap();
-        let mut keys = HashMap::<String, String>::default();
-        for pair in keys_side.split(';') {
-            let mut pair = pair.split('=');
-            let key = pair.next().unwrap();
-            let value = pair.next().unwrap();
-            keys.insert(key.into(), value.into());
-        }
-        let mut infos = infos.split('@');
-        let nickname = infos.next().unwrap().split('!').next().unwrap();
-        let channel = infos.next().unwrap().split('#').next().unwrap();
-        Ok(Irc::new(
-            IrcType::Message,
-            Some(nickname.into()),
-            Some(keys),
-            channel.into(),
-            Some(message.split("\r\n").next().unwrap().into()),
-        ))
     }
 }
 
-impl Parser for EventParser {
-    fn parse(&self, input: String) -> IrcResult {
-        println!("event parsetr");
-        if !input.contains("JOIN") || !input.contains("PART") {
-            return Err(format!("cannot parse message '{}' yet", input));
-        }
-        EventParser::parse_join_part(&input)
-    }
-}
-
-impl EventParser {
-    fn parse_join_part(input: &str) -> IrcResult {
-        let mut splited = input.split_whitespace();
-        let left = splited.next().unwrap();
-        let event = splited.next().unwrap();
-        let channel = splited.next().unwrap().replace('#', "");
-        let irc_type = match event {
-            "JOIN" => IrcType::Join,
-            "PART" => IrcType::Part,
-            _ => return Err("event not supported yet".into()),
-        };
-        let nickname = left.split('!').next().unwrap().replace(':', "");
-        Ok(Irc::new(irc_type, Some(nickname), None, channel, None))
-    }
-}
 //TODO: WRITE A FUCKING TEST MOTHERFUCKER

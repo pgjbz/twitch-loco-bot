@@ -4,15 +4,15 @@ use std::{
     net::TcpStream,
 };
 
-use self::parser::{EventParser, MessageParser};
+use regex::Regex;
+
+use self::parser::Parser;
 
 mod parser;
 
 pub type IrcResult = Result<Irc, String>;
 
-trait Parser {
-    fn parse(&self, input: String) -> IrcResult;
-}
+
 
 const IRC_PORT: u16 = 6667;
 const IRC_URL: &str = "irc.chat.twitch.tv";
@@ -81,6 +81,45 @@ pub enum IrcType {
     Join,
     Part,
     Usernotice,
+    CleanChat,
+    Pong,
+    Ping,
+    UserState,
+    Notice,
+    Unknown,
+}
+
+impl IrcType {
+    fn display_name(&self) -> Regex {
+        match self {
+            Self::Message => todo!(),
+            Self::Join => todo!(),
+            Self::Part => todo!(),
+            Self::Usernotice => todo!(),
+            Self::CleanChat => todo!(),
+            Self::Pong => todo!(),
+            Self::Ping => todo!(),
+            Self::UserState => todo!(),
+            Self::Notice => todo!(),
+            _ => Regex::new("TODOU").unwrap(),
+        }
+    }
+}
+
+impl From<&str> for IrcType {
+    fn from(value: &str) -> Self {
+        match value {
+            "PRIVMSG" => Self::Message,
+            "JOIN" => Self::Join,
+            "PART" => Self::Part,
+            "USERNOTICE" => Self::Usernotice,
+            "CLEARCHAT" => Self::CleanChat,
+            "PING" => Self::Ping,
+            "PONG" => Self::Pong,
+            "NOTICE" => Self::Notice,
+            _ => Self::Unknown,
+        }
+    }
 }
 
 impl LocoConfig {
@@ -138,19 +177,15 @@ impl LocoConnection {
                 connection.read(&mut buf).unwrap();
                 if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
                     //for now only process chat message
-                    let parser: Box<dyn Parser> = if msg.contains("PRIVMSG") {
-                        Box::new(MessageParser::default())
-                    } else {
-                        Box::new(EventParser::default())
-                    };
+                    let parser: Parser = Parser;
                     LocoConnection::execute(msg, parser, &exec);
                 }
             }
         }
     }
 
-    fn execute(input: String, parser: Box<dyn Parser>, exec: impl Fn(Irc)) {
-        match parser.as_ref().parse(input) {
+    fn execute(input: String, parser: Parser, exec: impl Fn(Irc)) {
+        match parser.parse(input) {
             Ok(parsed) => exec(parsed),
             Err(err) => eprintln!("{}", err),
         }

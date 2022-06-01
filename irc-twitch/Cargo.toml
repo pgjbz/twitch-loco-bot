@@ -8,4 +8,4 @@ authors = ["Paulo Gabriel Justino Bezerra <contact@pgjbz.dev>"]
 
 [dependencies]
 
-
+regex = "1.5.6"
