@@ -7,18 +7,18 @@ pub(super) struct Parser;
 impl Parser {
     pub(super) fn parse(&self, input: String) -> IrcResult {
         let irc_type = self.extract_event(&input);
-        let _channel = self.extract_channel(&input);
-        let _nickname = self.extract_nickname(&input, &irc_type);
+        let channel = self.extract_channel(&input);
+        let nickname = self.extract_nickname(&input, &irc_type);
         todo!()
     }
 
     fn extract_event(&self, input: &str) -> IrcType {
-        let regex = Regex::new("((?<=\\s)([A-Z]+))|(([A-Z]+)(?=\\s))").unwrap();
+        let regex = Regex::new(r"((?<=\s)([A-Z]+))|(([A-Z]+)(?=\s))").unwrap();
         self.match_regex_string(regex, &input).into()
     }
 
     fn extract_channel(&self, input: &str) -> String {
-        let regex = Regex::new("(?<=\\s#)(\\w+)").unwrap();
+        let regex = Regex::new(r"(?<=\s#)(\w+)").unwrap();
         self.match_regex_string(regex, input)
     }
 
