@@ -12,8 +12,6 @@ mod parser;
 
 pub type IrcResult = Result<Irc, String>;
 
-
-
 const IRC_PORT: u16 = 6667;
 const IRC_URL: &str = "irc.chat.twitch.tv";
 
@@ -91,18 +89,19 @@ pub enum IrcType {
 
 impl IrcType {
     fn display_name(&self) -> Regex {
-        match self {
-            Self::Message => todo!(),
-            Self::Join => todo!(),
-            Self::Part => todo!(),
-            Self::Usernotice => todo!(),
-            Self::CleanChat => todo!(),
-            Self::Pong => todo!(),
-            Self::Ping => todo!(),
-            Self::UserState => todo!(),
-            Self::Notice => todo!(),
-            _ => Regex::new("TODOU").unwrap(),
-        }
+        let expr = match self {
+            Self::Message => r"(?<=:)(\w+)(?=!)",
+            Self::Join => r"(?<=:)(\w+)(?=!)",
+            Self::Part => r"(?<=:)(\w+)(?=!)",
+            Self::Usernotice => r"(?<=display-name=)([\w]+)",
+            Self::CleanChat => r"(?<=:)([\w]+)(?!.)",
+            Self::Pong => r"TODOU",
+            Self::Ping => r"TODOU",
+            Self::UserState => r"(?<=display-name=)([\w]+)",
+            Self::Notice => r"TODOU",
+            _ => r"TODOU",
+        };
+        Regex::new(expr).unwrap()
     }
 }
 
