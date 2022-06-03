@@ -10,3 +10,9 @@ authors = ["Paulo Gabriel Justino Bezerra <contact@pgjbz.dev>"]
 
 dotenv = "0.15.0"
 irc-twitch = { path = "../irc-twitch" }
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"

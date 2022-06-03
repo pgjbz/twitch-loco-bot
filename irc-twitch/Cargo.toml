@@ -9,3 +9,9 @@ authors = ["Paulo Gabriel Justino Bezerra <contact@pgjbz.dev>"]
 [dependencies]
 
 fancy-regex = "0.10.0"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"

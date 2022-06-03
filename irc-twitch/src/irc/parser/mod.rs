@@ -49,10 +49,7 @@ impl Parser {
 
     fn match_regex_string(&self, regex: Regex, input: &str, idx: usize) -> Option<String> {
         match regex.captures(input) {
-            Ok(Some(cap)) => match cap.get(idx) {
-                Some(m) => Some(m.as_str().into()),
-                None => None,
-            },
+            Ok(Some(cap)) => cap.get(idx).map(|m| m.as_str().into()),
             _ => None,
         }
     }
