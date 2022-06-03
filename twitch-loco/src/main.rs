@@ -14,6 +14,5 @@ fn main() -> IOResult<()> {
     for item in loco_connection {
         println!("{:?} -> {:?}@{}: {:?}", item.irc_type,item.nickname, item.channel, item.message)
     }
-    // loco_connection.read(|irc|);
     Ok(())
 }

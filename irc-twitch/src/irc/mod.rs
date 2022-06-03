@@ -170,25 +170,11 @@ impl LocoConnection {
 
     //TODO: greceful shutdown
     pub fn read(&mut self, exec: impl Fn(Irc)) {
-        if let Some(connection) = &mut self.connection {
-            loop {
-                let mut buf = [0; 1024];
-                connection.read(&mut buf).unwrap();
-                if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
-                    //for now only process chat message
-                    let parser: Parser = Parser;
-                    LocoConnection::execute(msg, parser, &exec);
-                }
-            }
+        for irc in self {
+            exec(irc)
         }
     }
 
-    fn execute(input: String, parser: Parser, exec: impl Fn(Irc)) {
-        match parser.parse(input) {
-            Ok(parsed) => exec(parsed),
-            Err(err) => eprintln!("{}", err),
-        }
-    }
 }
 
 impl Iterator for LocoConnection {
@@ -198,12 +184,17 @@ impl Iterator for LocoConnection {
         let mut irc: Option<Self::Item> = None;
         if let Some(connection) = &mut self.connection {
             let mut buf = [0; 1024];
-            connection.read(&mut buf).unwrap();
-            if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
-                if let Ok(value) = Parser.parse(msg) {
-                    irc = Some(value)
-                }
+            match connection.read(&mut buf) {
+                Ok(_) => {
+                    if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
+                        if let Ok(value) = Parser.parse(msg) {
+                            irc = Some(value)
+                        }
+                    }
+                },
+                Err(err) => eprintln!("{}", err)
             }
+        
         }
         irc
     }
