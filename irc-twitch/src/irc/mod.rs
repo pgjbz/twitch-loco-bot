@@ -46,6 +46,8 @@ pub enum Command {
     Pass,
     Nick,
     Join,
+    Pong,
+    Ping,
     Privmsg,
 }
 
@@ -55,6 +57,8 @@ impl Command {
             Self::Pass => "PASS oauth:".into(),
             Self::Nick => "NICK ".into(),
             Self::Join => "JOIN #".into(),
+            Self::Pong => "PONG :tmi.twitch.tv".into(),
+            Self::Ping => "PING".into(),
             Self::Privmsg => format!("PRIVMSG #{} :", connection.config.channel_to_join.clone()),
         };
         format!("{}{}\r\n", prefix, &arg)
@@ -205,7 +209,7 @@ impl LocoConnection {
 
     pub fn send_command(&mut self, command: Command, arg: &str) -> IOResult<()> {
         let command = command.build(arg.into(), self);
-        if let Some(connection) = &mut self.connection {
+        if let Some(ref mut connection) = self.connection {
             connection.write_all(command.as_bytes())?;
             connection.flush()?;
         }

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use fancy_regex::Regex;
 
 use super::{Irc, IrcResult, IrcType};
@@ -15,12 +17,14 @@ impl Parser {
             DEFAULT_NONE.into()
         };
         let nickname = self.extract_nickname(&input, &irc_type);
-        let message = if let IrcType::Message = irc_type {
-            self.extract_message(&input)
+        let (message, keys) = if let IrcType::Message = irc_type {
+            let message = self.extract_message(&input);
+            let keys = self.extract_keys(&input);
+            (message, keys)
         } else {
-            None
+            (None, None)
         };
-        Ok(Irc::new(irc_type, nickname, None, channel, message))
+        Ok(Irc::new(irc_type, nickname, keys, channel, message))
     }
 
     fn extract_event(&self, input: &str) -> IrcType {
@@ -52,6 +56,18 @@ impl Parser {
             Ok(Some(cap)) => cap.get(idx).map(|m| m.as_str().into()),
             _ => None,
         }
+    }
+
+    fn extract_keys(&self, input: &str) -> Option<HashMap<String, String>> {
+        let key_pair = input.split(" :").next().unwrap();
+        let mut key_value = HashMap::new();
+        for key_pair in key_pair.split(';') {
+            let mut key_value_iter = key_pair.split('=');
+            let key = key_value_iter.next().unwrap();
+            let value = key_value_iter.next().unwrap();
+            key_value.insert(key.into(), value.into());
+        }
+        Some(key_value)
     }
 }
 
