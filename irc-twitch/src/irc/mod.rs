@@ -238,17 +238,19 @@ impl Iterator for LocoConnection {
                         }
                     }
                     Err(err) => match IrcError::from(err) {
-                        IrcError::Aborted | IrcError::Host(_) => match Self::new(self.config.clone()) {
-                            Ok(con) => self.connection = con.connection,
-                            Err(err) => {
-                                eprintln!("{:?}", err);
-                                continue;
-                            },
-                        },
+                        IrcError::Aborted | IrcError::Host(_) => {
+                            match Self::new(self.config.clone()) {
+                                Ok(con) => self.connection = con.connection,
+                                Err(err) => {
+                                    eprintln!("{:?}", err);
+                                    continue;
+                                }
+                            }
+                        }
                         err => {
                             eprintln!("{:?}", err);
                             break;
-                        },
+                        }
                     },
                 }
             }
