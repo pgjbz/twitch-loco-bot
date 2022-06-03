@@ -10,7 +10,10 @@ fn main() -> IOResult<()> {
     let channel_to_join = env::var("TWITCH_CHANNEL_JOIN").expect("channel to join is required");
 
     let loco_config = LocoConfig::new(oauth, nickname, channel_to_join);
-    let mut loco_connection = LocoConnection::new(loco_config)?;
-    loco_connection.read(|irc| println!("{:?}@{}: {:?}", irc.nickname, irc.channel, irc.message));
+    let loco_connection = LocoConnection::new(loco_config)?;
+    for item in loco_connection {
+        println!("{:?} -> {:?}@{}: {:?}", item.irc_type,item.nickname, item.channel, item.message)
+    }
+    // loco_connection.read(|irc|);
     Ok(())
 }

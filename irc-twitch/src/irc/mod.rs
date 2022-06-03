@@ -191,6 +191,24 @@ impl LocoConnection {
     }
 }
 
+impl Iterator for LocoConnection {
+    type Item = Irc;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut irc: Option<Self::Item> = None;
+        if let Some(connection) = &mut self.connection {
+            let mut buf = [0; 1024];
+            connection.read(&mut buf).unwrap();
+            if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
+                if let Ok(value) = Parser.parse(msg) {
+                    irc = Some(value)
+                }
+            }
+        }
+        irc
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
