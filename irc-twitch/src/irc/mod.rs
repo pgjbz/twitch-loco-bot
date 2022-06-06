@@ -169,8 +169,8 @@ impl LocoConnection {
 
     fn try_connect(loco_config: LocoConfig) -> Result<LocoConnection, IrcError> {
         const MAX_ATTEMPS: usize = 3;
-        for attemp in 1..=MAX_ATTEMPS {
-            println!("connection attemp {}", attemp);
+        for attempt in 0..MAX_ATTEMPS {
+            println!("connection attempt {att}", att = attempt + 1);
             match TcpStream::connect(&format!("{}:{}", IRC_URL, IRC_PORT)) {
                 Ok(connection) => {
                     let mut loco_connection = LocoConnection {
@@ -188,10 +188,10 @@ impl LocoConnection {
                     return Ok(loco_connection);
                 }
                 _ => {
-                    if attemp == MAX_ATTEMPS {
+                    if attempt == MAX_ATTEMPS {
                         return Err(IrcError::MaxAttemps);
                     }
-                    thread::sleep(Duration::from_secs((1_u64).pow(attemp as u32)))
+                    thread::sleep(Duration::from_secs((2_u64).pow(attempt as u32)))
                 }
             }
         }
