@@ -10,7 +10,7 @@ fn main() {
     let channel_to_join = env::var("TWITCH_CHANNEL_JOIN").expect("channel to join is required");
 
     let loco_config = LocoConfig::new(oauth, nickname, channel_to_join);
-    let mut loco_connection: LocoConnection = LocoConnection::new(loco_config).unwrap();
+    let mut loco_connection = LocoConnection::new(loco_config).unwrap();
 
     while let Some(item) = loco_connection.next() {
         match item.irc_type {

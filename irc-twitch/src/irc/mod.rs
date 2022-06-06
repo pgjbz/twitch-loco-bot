@@ -52,7 +52,10 @@ pub enum Command {
 }
 
 impl Command {
-    pub fn build(&self, arg: String, connection: &LocoConnection) -> String {
+    pub fn build<T>(&self, arg: String, connection: &LocoConnection<T>) -> String
+    where
+        T: Read + Write + Unpin,
+    {
         let prefix = match self {
             Self::Pass => "PASS oauth:".into(),
             Self::Nick => "NICK ".into(),
@@ -65,8 +68,11 @@ impl Command {
     }
 }
 
-pub struct LocoConnection {
-    connection: Option<TcpStream>,
+pub struct LocoConnection<T>
+where
+    T: Read + Write + Unpin,
+{
+    connection: Option<T>,
     config: LocoConfig,
 }
 
@@ -162,12 +168,13 @@ impl LocoConfig {
     }
 }
 
-impl LocoConnection {
-    pub fn new(loco_config: LocoConfig) -> Result<LocoConnection, IrcError> {
-        LocoConnection::try_connect(loco_config)
+impl LocoConnection<TcpStream> {
+    pub fn new(loco_config: LocoConfig) -> Result<LocoConnection<TcpStream>, IrcError> {
+        let con: LocoConnection<TcpStream> = LocoConnection::try_connect(loco_config)?;
+        Ok(con)
     }
 
-    fn try_connect(loco_config: LocoConfig) -> Result<LocoConnection, IrcError> {
+    fn try_connect(loco_config: LocoConfig) -> Result<LocoConnection<TcpStream>, IrcError> {
         const MAX_ATTEMPS: usize = 3;
         for attempt in 0..MAX_ATTEMPS {
             println!("connection attempt {att}", att = attempt + 1);
@@ -224,38 +231,21 @@ impl LocoConnection {
     }
 }
 
-impl Iterator for LocoConnection {
+impl<T> Iterator for LocoConnection<T>
+where
+    T: Read + Write + Unpin,
+{
     type Item = Irc;
 
     fn next(&mut self) -> Option<Self::Item> {
         let mut irc: Option<Self::Item> = None;
-        loop {
-            if let Some(connection) = &mut self.connection {
-                let mut buf = [0; 1024];
-                match connection.read(&mut buf) {
-                    Ok(_) => {
-                        if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
-                            if let Ok(value) = Parser.parse(msg) {
-                                irc = Some(value);
-                                break;
-                            }
-                        }
+        if let Some(connection) = &mut self.connection {
+            let mut buf = [0; 1024];
+            if connection.read(&mut buf).is_ok() {
+                if let Ok(msg) = String::from_utf8(Vec::from(buf)) {
+                    if let Ok(value) = Parser.parse(msg) {
+                        irc = Some(value);
                     }
-                    Err(err) => match IrcError::from(err) {
-                        IrcError::Aborted | IrcError::Host(_) => {
-                            match Self::new(self.config.clone()) {
-                                Ok(con) => self.connection = con.connection,
-                                Err(err) => {
-                                    eprintln!("{:?}", err);
-                                    continue;
-                                }
-                            }
-                        }
-                        err => {
-                            eprintln!("{:?}", err);
-                            break;
-                        }
-                    },
                 }
             }
         }
@@ -269,7 +259,7 @@ mod tests {
 
     #[test]
     fn build_commands() {
-        let fake_conn = LocoConnection {
+        let fake_conn: LocoConnection<TcpStream> = LocoConnection {
             connection: None,
             config: LocoConfig {
                 oauth: "test".into(),
