@@ -43,7 +43,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "irc-twitch"
+name = "loco-twitch"
 version = "0.1.0"
 dependencies = [
  "fancy-regex",
@@ -77,5 +77,5 @@ name = "twitch-loco"
 version = "0.1.0"
 dependencies = [
  "dotenv",
- "irc-twitch",
+ "loco-twitch",
 ]
