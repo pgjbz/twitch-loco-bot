@@ -1,6 +1,6 @@
 use std::env;
 
-use irc_twitch::irc::{Command, IrcType, LocoConfig, LocoConnection};
+use loco_twitch::irc::{Command, IrcType, LocoConfig, LocoConnection};
 
 fn main() {
     dotenv::dotenv().ok();
