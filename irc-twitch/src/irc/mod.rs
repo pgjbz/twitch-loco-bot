@@ -209,17 +209,13 @@ impl LocoConnection<TcpStream> {
         let map = vec.iter().flat_map(|val| val.bytes()).collect::<Vec<u8>>();
         if let Some(connection) = &mut self.connection {
             connection.write_all(&map)?;
-            connection.flush()?;
         }
         Ok(())
     }
 
     pub fn send_command(&mut self, command: Command, arg: &str) -> IOResult<()> {
         let command = command.build(arg.into(), self);
-        if let Some(ref mut connection) = self.connection {
-            connection.write_all(command.as_bytes())?;
-            connection.flush()?;
-        }
+        self.batch_command(&[command])?;
         Ok(())
     }
 
